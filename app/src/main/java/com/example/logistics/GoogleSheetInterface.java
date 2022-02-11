@@ -1,9 +1,8 @@
-package com.example.logistics.GoogleSheet;
+package com.example.logistics;
 
 import android.app.Activity;
 import android.util.Log;
 
-import com.example.logistics.MainActivity;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.HttpTransport;
@@ -22,8 +21,9 @@ import java.util.List;
 
 public class GoogleSheetInterface extends Activity {
 
+
     //private final String SPREADSHEET_ID = "1ug48SPLf7hiCo7WcavACkYxvhwkhJal5IWY8X33RU48";
-    private final String SPREADSHEET_ID = MainActivity.GOOGLE_SHEET_SPREADSHEET_ID;
+  //  private final String SPREADSHEET_ID = MainActivity.GOOGLE_SHEET_SPREADSHEET_ID;
 
 
 
@@ -35,7 +35,7 @@ public class GoogleSheetInterface extends Activity {
 
 
 
-    public List<List<Object>> getData(String sheetName, String cellName){
+    public List<List<Object>> getData(String SPREADSHEET_ID,String sheetName, String cellName){
         String range = sheetName+"!"+cellName;
         List<List<Object>> data = new ArrayList<>();
         GoogleCredential cred = null;
@@ -65,7 +65,7 @@ return data;
     }
 
 
-public void updateRangeData(String sheetName, String cellName, List<List<Object>> listData){
+public void updateRangeData(String SPREADSHEET_ID,String sheetName, String cellName, List<List<Object>> listData){
     String range = sheetName+"!"+cellName;
     List<List<Object>> data = new ArrayList<>();
     GoogleCredential cred = null;
@@ -99,7 +99,7 @@ public void updateRangeData(String sheetName, String cellName, List<List<Object>
             }
 }
 
-public int getTotalRows(String sheetName){
+public int getTotalRows(String SPREADSHEET_ID,String sheetName){
     String range = sheetName+"!A1:B";
 int totalRows = 0;
     GoogleCredential cred = null;
