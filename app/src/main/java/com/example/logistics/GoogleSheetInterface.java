@@ -57,9 +57,11 @@ public class GoogleSheetInterface extends Activity {
                             .get(SPREADSHEET_ID, range)
                             .execute();
                       data = result.getValues();
+                      MainActivity.googleSheetDownloadSts =1; //update status
 
                 } catch (IOException e) {
                     Log.e("GSHelper", e.getLocalizedMessage());
+                    MainActivity.googleSheetDownloadSts =0;
                 }
 return data;
     }
@@ -94,8 +96,10 @@ public void updateRangeData(String SPREADSHEET_ID,String sheetName, String cellN
                                 (SPREADSHEET_ID,
                                         range, valueRange).setValueInputOption("USER_ENTERED")
                         .execute();
+                MainActivity.googleSheetUploadoadSts=1; //update status
             } catch (IOException e) {
                 e.printStackTrace();
+                MainActivity.googleSheetUploadoadSts =0;
             }
 }
 

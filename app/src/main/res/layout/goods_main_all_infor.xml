@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/goods_main_all_infor_guidline1"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.9"
+        android:layout_width="0dp"
+        android:layout_height="0dp">
+    </androidx.constraintlayout.widget.Guideline>
+    <ScrollView
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/goods_main_all_infor_guidline1">
+        <LinearLayout
+            android:background="@color/colorPrimary"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/goods_main_all_infor_guidline1">
+
+            <TextView
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:text="Mã Hàng"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+            <TextView
+                android:id="@+id/goods_main_goods_id"
+                android:gravity="center"
+                android:text="012345"
+                android:textSize="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+
+            <TextView
+                android:textStyle="bold"
+                android:background="@color/white"
+                android:textSize="20dp"
+                android:text="Loại Hàng Hóa"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+            <TextView
+                android:background="@color/white"
+                android:id="@+id/goods_main_type"
+                android:gravity="center"
+                android:text="Thực Phẩm"
+                android:textSize="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+
+            <TextView
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:text="Người Gửi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+            <TextView
+                android:id="@+id/goods_main_sender_name"
+                android:gravity="center"
+                android:text="Nguyễn Văn Gửi"
+                android:textSize="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+            <TextView
+                android:id="@+id/goods_main_sender_phone"
+                android:gravity="center"
+                android:text="0827711088"
+                android:textSize="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+            <TextView
+                android:id="@+id/goods_main_sender_address"
+                android:gravity="center"
+                android:text="A2 An Bình City, 232 Phạm Văn Đồng Cổ Nhuế 1"
+                android:textSize="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+            <TextView
+                android:id="@+id/goods_main_sender_date"
+                android:gravity="center"
+                android:text="30-03-2022"
+                android:textSize="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+
+
+            <TextView
+                android:textStyle="bold"
+                android:background="@color/white"
+                android:textSize="20dp"
+                android:text="Người Nhận"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+            <TextView
+                android:background="@color/white"
+                android:id="@+id/goods_main_receiver_name"
+                android:gravity="center"
+                android:text="Nguyễn Văn Nhận"
+                android:textSize="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+            <TextView
+                android:background="@color/white"
+                android:id="@+id/goods_main_receiver_phone"
+                android:gravity="center"
+                android:text="0827711088"
+                android:textSize="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+            <TextView
+                android:background="@color/white"
+                android:id="@+id/goods_main_receiver_address"
+                android:gravity="center"
+                android:text="A2 An Bình City, 232 Phạm Văn Đồng Cổ Nhuế 1"
+                android:textSize="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+            <TextView
+                android:background="@color/white"
+                android:id="@+id/goods_main_receiver_date"
+                android:gravity="center"
+                android:text="31/03/2022"
+                android:textSize="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+
+            <TextView
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:text="Trạng Thái"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+            <TextView
+                android:id="@+id/goods_main_goods_sts"
+                android:gravity="center"
+                android:text="chưa giao"
+                android:textSize="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+
+            <TextView
+                android:background="@color/white"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:text="Số Kiện"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+            <TextView
+                android:background="@color/white"
+                android:id="@+id/goods_main_goods_quantity"
+                android:gravity="center"
+                android:text="2/5"
+                android:textSize="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+
+            <TextView
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:text="Số Tiền Phải Thu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+            <TextView
+                android:id="@+id/goods_main_money"
+                android:gravity="center"
+                android:text="25.000"
+                android:textSize="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+
+            <TextView
+                android:background="@color/white"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:text="Giá Trị Hàng"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+            <TextView
+                android:background="@color/white"
+                android:id="@+id/goods_main_goods_price"
+                android:gravity="center"
+                android:text="1.000.000"
+                android:textSize="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+
+            <TextView
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:text="Ghi Chú"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+            <TextView
+                android:id="@+id/goods_main_goods_notes"
+                android:gravity="center"
+                android:text="abcxyz"
+                android:textSize="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+    <LinearLayout
+        android:background="@color/colorSecondaryLight"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/goods_main_all_infor_guidline1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:textSize="12dp"
+            android:id="@+id/goods_main_call_sender_bt"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="gọi\n người gửi ">
+        </Button>
+
+        <Button
+            android:textSize="12dp"
+            android:id="@+id/goods_main_call_receiver_bt"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="gọi\nngười nhận">
+        </Button>
+
+        <Button
+            android:textSize="12dp"
+            android:id="@+id/goods_main_update_bt"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="cập nhật">
+        </Button>
+
+
+        <Button
+            android:textSize="12dp"
+            android:id="@+id/goods_main_close_bt"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="      Đóng     ">
+        </Button>
+
+
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

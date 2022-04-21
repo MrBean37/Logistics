@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "vibrant-brand-325503",
+  "private_key_id": "090251b2887c49f7712b9143a7054c9190ea990e",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC27PQ/hDy+lsq3\n9xX9UP+v/Cv0WfNpkihGQLVNl7pe/5elwl7ed5ZqlKH7FuPZ11vBWdPqorphF5Dp\n2KWp03Q6/frI2w1e3Yf8/YZh/RmFtptUORcv4QZ0WtTY8zt8vEx08wF55M8FC0pU\nov2puMvU2NCZgan7AsrudmgflwGL7uRuaqTaXnJLN85hj/sLKNBzLCnsIj2p2sY1\nv0pmvajH06AyvTNwC/dfCduXJbDU18dBFIqd1UUeQI4M9vS3SbR8vP6eTENw6Xk/\nDSh0qhPEY1CAhnFVSCghDkqTso/4mpcgiSC5b3TaxQngu0XRtJUt0i2llEBGJ2IW\nk09upBD1AgMBAAECggEAHmPvkD3f+aoDs9yRAqzaTdqPUuE+12M43bMSa/mxNOcx\nwpAwQrWLf9mBr711zVNCIzVRR8IRROAtayxbGYPP450edRAvgHs9hIJ6OP1bqCNW\nWv/BIms4L0yH4CNI1shRy3wz2pRw8F2X08fgbLoO4yXCQj6QhutH26ZAVj84Oo8F\n7BV/o0h1Ep7bd50S2nSL1jk7Xni+rl9YKyW0F1ARt1B08ENKZixHCgfQ/WAkYx1X\ndYEOe8RXFF+MFIN/4mPzyt6gSxT2R/6IRR0QSvkLrG823C04pz0c2A2npRivo+TZ\nBGLJG7RLKmJEx5TM3XgssCkSGEULDq5um6ddQkxwYQKBgQDaeaogvoyla3+95DEd\nUclHohnhXTYWUkMWnK6pxHqQAZvnU3U3XA1Dzuxaq6Vn7eR8hBrcJoNRLkumbQGi\nIcTMiddX1DvEDYXSwrnvERUezki9wpCMuyVT3/obBegck7FpMGPa9ZiVaC9Z9iFS\n4XRAgZP7LffjDfSPSn/zDzUlQwKBgQDWWCzFvHO+UWze3jpROguu72yIVIQD0AVh\neqStfp0ryV091v/hhaL5w032K52WIikG9NP35gr5L/Eh1uR6gp6Hq71TC8Za+A+Q\nlKb9Ak3jVuflzRm0uHjhrPzea1x9ob+uwWh7aHw8ljID88ftnk+EEL1MNHr+JJn2\n3N0q3TrxZwKBgQCXs/GZSRcaajnKXqBoDnloXzv/TB0ZhMeG9QcnZQIB6swZ5c63\nwRiI5C8kipmRQBPvDkAkbC20+iOXjYubzDz+FhzMpNdXPFiXT5WSVldHC9Bgy7BZ\nuD2kLxtZFlHlPfzr4KkFypHH9Q8kNY9QILL7c76QpIvDQtZ1hTKxUPcDRwKBgEzL\nGn9dnTo6gf73L32ahkUOkpvla8bR6JucDRP7oOPnKPjW5qYt8s35Ix1nUvZPFtPf\nM3JFgPj2LDYrf4BE+/cvmI0AUviUlz79gzZydOVWZY73hJYy4Vw5Vf96B5EbOkmq\nEXzlWl16kkDIPoDrjyGJvchnpQkYo/DGAJcy28NRAoGBAM+P2bxkQYemJpwGdKtL\nDPjKMBnuUBlpRNlnLkB2TEBAVNwok/Ht5xHplariXdIJQ13TZIjPIZU5S6w1yrDu\nA6PYXdBgDLUmsRe4TP6Go8nfd+KAGOVqq4fiG3a9jSrGFHM+Cn9gbb3PiFB2CxGh\nXoO5EDiHSt6dip/zwr+TvOnv\n-----END PRIVATE KEY-----\n",
+  "client_email": "google-sheet-helper@vibrant-brand-325503.iam.gserviceaccount.com",
+  "client_id": "117941196551424067556",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/google-sheet-helper%40vibrant-brand-325503.iam.gserviceaccount.com"
+}
