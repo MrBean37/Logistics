@@ -9,6 +9,7 @@ import android.Manifest;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.Layout;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,6 +53,15 @@ public class MainActivity extends AppCompatActivity {
     static public int googleSheetDownloadSts=0;
     static public int googleSheetUploadoadSts=0;
 
+
+    //floating button for main controll buttons
+    static public FloatingActionButton mainFab;
+    static public FloatingActionButton summaryFab;
+    static public FloatingActionButton goodsFab;
+    static public FloatingActionButton scanFab;
+    static public FloatingActionButton searchFab;
+    static public FloatingActionButton uploadFab;
+    static public FloatingActionButton downloadFab;
 
     // table ID for hàng hóa
 
@@ -117,13 +127,13 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         mainViewPager = findViewById(R.id.main_view_page);
-        FloatingActionButton mainFab =findViewById(R.id.main_fab);
-        final FloatingActionButton summaryFab =findViewById(R.id.summary_fab);
-        final FloatingActionButton goodsFab =findViewById(R.id.goods_fab);
-        final FloatingActionButton scanFab =findViewById(R.id.scan_fab);
-        final FloatingActionButton searchFab =findViewById(R.id.search_fab);
-        final FloatingActionButton uploadFab =findViewById(R.id.upload_fab);
-        final FloatingActionButton downloadFab =findViewById(R.id.download_fab);
+        mainFab =findViewById(R.id.main_fab);
+        summaryFab =findViewById(R.id.summary_fab);
+        goodsFab =findViewById(R.id.goods_fab);
+        scanFab =findViewById(R.id.scan_fab);
+        searchFab =findViewById(R.id.search_fab);
+        uploadFab =findViewById(R.id.upload_fab);
+        downloadFab =findViewById(R.id.download_fab);
 
         //set float button visible and invisible
         //at begining all float button have to invisible
@@ -205,6 +215,30 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        searchFab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mainViewPager.setCurrentItem(2);
+                summaryFab.setVisibility(View.GONE);
+                goodsFab.setVisibility(View.GONE);
+                scanFab.setVisibility(View.GONE);
+                searchFab.setVisibility(View.GONE);
+                uploadFab.setVisibility(View.GONE);
+                downloadFab.setVisibility(View.GONE);
+            }
+        });
+
+        scanFab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mainViewPager.setCurrentItem(3);
+                summaryFab.setVisibility(View.GONE);
+                goodsFab.setVisibility(View.GONE);
+                scanFab.setVisibility(View.GONE);
+                searchFab.setVisibility(View.GONE);
+                uploadFab.setVisibility(View.GONE);
+                downloadFab.setVisibility(View.GONE);
+            }
+        });
+
 
     }
 
@@ -259,7 +293,10 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new SummaryFragment(), "Summary");
         adapter.addFragment(new GoodsFragment(), "Goods Infor");
         adapter.addFragment(new GoodsSearchFragment(),"Goods Search");
+        adapter.addFragment(new GoodsScanFragment(),"Goods Scan");
 
         mainViewPager.setAdapter(adapter);
     }
+
+
 }

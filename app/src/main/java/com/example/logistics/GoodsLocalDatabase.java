@@ -198,7 +198,7 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
     }
 
 
-    public GoodsInformation getGoodsBaseID ( int id)
+    public GoodsInformation getGoodsBaseID ( int id)  // search full match
     {
         Log.i(TAG, "MyDatabaseHelper.getNote ... " + id);
 
@@ -258,7 +258,7 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
     // get customer information base on mobile phone number
 
 
-    public List<GoodsInformation> getGoodsBaseReceivePhone ( String receivePhone)
+    public List<GoodsInformation> getGoodsBaseReceivePhone ( String receivePhone)  // search contain
     {
         Log.i(TAG, "MyDatabaseHelper.getNote ... " +receivePhone);
 
@@ -269,8 +269,8 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
                         COLUMN_GOODS_TYPE,COLUMN_GOODS_STS,COLUMN_GOODS_QUANTITY,COLUMN_GOODS_UNIT,COLUMN_GOODS_WEIGHT,COLUMN_GOODS_MONEY,COLUMN_GOODS_DATE,COLUMN_GOODS_LOCATION,COLUMN_GOODS_NOTE,
                         COLUMN_GOODS_SEND_NAME,COLUMN_GOODS_SEND_ID,COLUMN_GOODS_SEND_PHONE,COLUMN_GOODS_SEND_CITY,COLUMN_GOODS_SEND_DISTRICT,COLUMN_GOODS_SEND_PROVINCE,
                         COLUMN_GOODS_SEND_CALLED,COLUMN_GOODS_SEND_DATE,COLUMN_GOODS_SEND_NOTE,COLUMN_GOODS_RECEIVE_NAME,COLUMN_GOODS_RECEIVE_ID,COLUMN_GOODS_RECEIVE_PHONE,COLUMN_GOODS_RECEIVE_CITY,
-                        COLUMN_GOODS_RECEIVE_DISTRICT,COLUMN_GOODS_RECEIVE_PROVICE,COLUMN_GOODS_RECEIVE_CALLED,COLUMN_GOODS_RECEIVE_DATE,COLUMN_GOODS_RECEIVE_NOTE}, COLUMN_GOODS_RECEIVE_PHONE + "=?",
-                new String[]{String.valueOf(receivePhone)}, null, null, null, null);
+                        COLUMN_GOODS_RECEIVE_DISTRICT,COLUMN_GOODS_RECEIVE_PROVICE,COLUMN_GOODS_RECEIVE_CALLED,COLUMN_GOODS_RECEIVE_DATE,COLUMN_GOODS_RECEIVE_NOTE}, COLUMN_GOODS_RECEIVE_PHONE + " LIKE ?",
+                new String[]{"%" + String.valueOf(receivePhone) + "%"}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
@@ -321,7 +321,7 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
     }
 
 
-    public List<GoodsInformation> getGoodsBaseSendPhone ( String sendPhone)
+    public List<GoodsInformation> getGoodsBaseSendPhone ( String sendPhone)   // search conatain
     {
         Log.i(TAG, "MyDatabaseHelper.getNote ... " +sendPhone);
 
@@ -332,8 +332,8 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
                         COLUMN_GOODS_TYPE,COLUMN_GOODS_STS,COLUMN_GOODS_QUANTITY,COLUMN_GOODS_UNIT,COLUMN_GOODS_WEIGHT,COLUMN_GOODS_MONEY,COLUMN_GOODS_DATE,COLUMN_GOODS_LOCATION,COLUMN_GOODS_NOTE,
                         COLUMN_GOODS_SEND_NAME,COLUMN_GOODS_SEND_ID,COLUMN_GOODS_SEND_PHONE,COLUMN_GOODS_SEND_CITY,COLUMN_GOODS_SEND_DISTRICT,COLUMN_GOODS_SEND_PROVINCE,
                         COLUMN_GOODS_SEND_CALLED,COLUMN_GOODS_SEND_DATE,COLUMN_GOODS_SEND_NOTE,COLUMN_GOODS_RECEIVE_NAME,COLUMN_GOODS_RECEIVE_ID,COLUMN_GOODS_RECEIVE_PHONE,COLUMN_GOODS_RECEIVE_CITY,
-                        COLUMN_GOODS_RECEIVE_DISTRICT,COLUMN_GOODS_RECEIVE_PROVICE,COLUMN_GOODS_RECEIVE_CALLED,COLUMN_GOODS_RECEIVE_DATE,COLUMN_GOODS_RECEIVE_NOTE}, COLUMN_GOODS_SEND_PHONE + "=?",
-                new String[]{String.valueOf(sendPhone)}, null, null, null, null);
+                        COLUMN_GOODS_RECEIVE_DISTRICT,COLUMN_GOODS_RECEIVE_PROVICE,COLUMN_GOODS_RECEIVE_CALLED,COLUMN_GOODS_RECEIVE_DATE,COLUMN_GOODS_RECEIVE_NOTE}, COLUMN_GOODS_SEND_PHONE + " LIKE ?",
+                new String[]{"%" + String.valueOf(sendPhone) + "%"}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
@@ -384,7 +384,7 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
     }
 
 
-    public List<GoodsInformation> getGoodsBaseCode ( String code)
+    public List<GoodsInformation> getGoodsBaseCode ( String code)   // search full match
     {
         Log.i(TAG, "MyDatabaseHelper.getNote ... " +code);
 
@@ -447,7 +447,7 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
     }
 
 
-    public List<GoodsInformation> getGoodsBaseSendName ( String sendName)
+    public List<GoodsInformation> getGoodsBaseSendName ( String sendName)   // search contain
     {
         Log.i(TAG, "MyDatabaseHelper.getNote ... " +sendName);
 
@@ -458,12 +458,12 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
                         COLUMN_GOODS_TYPE,COLUMN_GOODS_STS,COLUMN_GOODS_QUANTITY,COLUMN_GOODS_UNIT,COLUMN_GOODS_WEIGHT,COLUMN_GOODS_MONEY,COLUMN_GOODS_DATE,COLUMN_GOODS_LOCATION,COLUMN_GOODS_NOTE,
                         COLUMN_GOODS_SEND_NAME,COLUMN_GOODS_SEND_ID,COLUMN_GOODS_SEND_PHONE,COLUMN_GOODS_SEND_CITY,COLUMN_GOODS_SEND_DISTRICT,COLUMN_GOODS_SEND_PROVINCE,
                         COLUMN_GOODS_SEND_CALLED,COLUMN_GOODS_SEND_DATE,COLUMN_GOODS_SEND_NOTE,COLUMN_GOODS_RECEIVE_NAME,COLUMN_GOODS_RECEIVE_ID,COLUMN_GOODS_RECEIVE_PHONE,COLUMN_GOODS_RECEIVE_CITY,
-                        COLUMN_GOODS_RECEIVE_DISTRICT,COLUMN_GOODS_RECEIVE_PROVICE,COLUMN_GOODS_RECEIVE_CALLED,COLUMN_GOODS_RECEIVE_DATE,COLUMN_GOODS_RECEIVE_NOTE}, COLUMN_GOODS_SEND_NAME + "=?",
-                new String[]{String.valueOf(sendName)}, null, null, null, null);
+                        COLUMN_GOODS_RECEIVE_DISTRICT,COLUMN_GOODS_RECEIVE_PROVICE,COLUMN_GOODS_RECEIVE_CALLED,COLUMN_GOODS_RECEIVE_DATE,COLUMN_GOODS_RECEIVE_NOTE}, COLUMN_GOODS_SEND_NAME + " LIKE ?",
+                new String[]{"%" + String.valueOf(sendName) + "%"}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
-        if (cursor.moveToFirst()) {
+        if (cursor != null & cursor.moveToFirst()) {
             do {
                 GoodsInformation goods = new GoodsInformation();
 
@@ -510,7 +510,7 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
     }
 
 
-    public List<GoodsInformation> getGoodsBaseReceiveName ( String receiveName)
+    public List<GoodsInformation> getGoodsBaseReceiveName ( String receiveName)  // search contain
     {
         Log.i(TAG, "MyDatabaseHelper.getNote ... " +receiveName);
 
@@ -521,8 +521,8 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
                         COLUMN_GOODS_TYPE,COLUMN_GOODS_STS,COLUMN_GOODS_QUANTITY,COLUMN_GOODS_UNIT,COLUMN_GOODS_WEIGHT,COLUMN_GOODS_MONEY,COLUMN_GOODS_DATE,COLUMN_GOODS_LOCATION,COLUMN_GOODS_NOTE,
                         COLUMN_GOODS_SEND_NAME,COLUMN_GOODS_SEND_ID,COLUMN_GOODS_SEND_PHONE,COLUMN_GOODS_SEND_CITY,COLUMN_GOODS_SEND_DISTRICT,COLUMN_GOODS_SEND_PROVINCE,
                         COLUMN_GOODS_SEND_CALLED,COLUMN_GOODS_SEND_DATE,COLUMN_GOODS_SEND_NOTE,COLUMN_GOODS_RECEIVE_NAME,COLUMN_GOODS_RECEIVE_ID,COLUMN_GOODS_RECEIVE_PHONE,COLUMN_GOODS_RECEIVE_CITY,
-                        COLUMN_GOODS_RECEIVE_DISTRICT,COLUMN_GOODS_RECEIVE_PROVICE,COLUMN_GOODS_RECEIVE_CALLED,COLUMN_GOODS_RECEIVE_DATE,COLUMN_GOODS_RECEIVE_NOTE}, COLUMN_GOODS_RECEIVE_NAME + "=?",
-                new String[]{String.valueOf(receiveName)}, null, null, null, null);
+                        COLUMN_GOODS_RECEIVE_DISTRICT,COLUMN_GOODS_RECEIVE_PROVICE,COLUMN_GOODS_RECEIVE_CALLED,COLUMN_GOODS_RECEIVE_DATE,COLUMN_GOODS_RECEIVE_NOTE}, COLUMN_GOODS_RECEIVE_NAME + " LIKE ?",
+                new String[]{"%" + String.valueOf(receiveName) + "%"}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
@@ -573,7 +573,7 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
     }
 
 
-    public List<GoodsInformation> getGoodsBaseSts ( String sts)
+    public List<GoodsInformation> getGoodsBaseSts ( String sts)  // search full match
     {
         Log.i(TAG, "MyDatabaseHelper.getNote ... " +sts);
 
@@ -636,7 +636,7 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
         return goodsList;
     }
 
-    public List<GoodsInformation> getGoodsBaseLocation ( String location)
+    public List<GoodsInformation> getGoodsBaseLocation ( String location) // search full match
     {
         Log.i(TAG, "MyDatabaseHelper.getNote ... " +location);
 

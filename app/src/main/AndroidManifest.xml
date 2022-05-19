@@ -25,6 +25,11 @@
         <activity android:name=".LicenseCheck"
             android:screenOrientation="fullSensor"
             ></activity>
+        <activity android:name=".Capture"
+            android:screenOrientation="fullSensor"
+            android:stateNotNeeded="true"
+            android:theme="@style/zxing_CaptureTheme"
+            ></activity>
     </application>
 
 </manifest>

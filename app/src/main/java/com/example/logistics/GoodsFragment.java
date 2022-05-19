@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -101,37 +102,116 @@ public class GoodsFragment extends Fragment {
 
         //get data all
         //final GoodsLocalDatabase goodsLocalDatabase =new GoodsLocalDatabase(getActivity());
+        //init for listview
         goodsAll = goodsLocalDatabase.getAllGoods();
+        goodsDone = goodsLocalDatabase.getGoodsBaseSts("600");
+        goodsNotDone = goodsLocalDatabase.getGoodsBaseSts("500");
+
+        try {
+            goodsMainTabLayout.getTabAt(0).setText("Tất Cả \n" + goodsAll.size() );
+        } catch (NullPointerException e) {
+            goodsMainTabLayout.getTabAt(0).setText("Tất Cả \n0" );
+        }
+
+        try {
+            goodsMainTabLayout.getTabAt(1).setText("Hoàn Thành \n" + goodsDone.size() );
+        } catch (NullPointerException e) {
+            goodsMainTabLayout.getTabAt(0).setText("Hoàn Thành \n0" );
+        }
+
+        try {
+            goodsMainTabLayout.getTabAt(2).setText("Chưa Xong \n" + goodsNotDone.size() );
+        } catch (NullPointerException e) {
+            goodsMainTabLayout.getTabAt(0).setText("Chưa Xong \n0" );
+        }
+
+        // end of tablayout
 
         registerForContextMenu(goodsMainListview);
         goodsMainListview.invalidateViews();  // refresh listview
 
         goodsMainListview.setAdapter(new GoodsFragmentListAdapter(getActivity(), goodsAll));
 
+        // detect scrolling direction
+
+        goodsMainListview.setOnScrollListener(new AbsListView.OnScrollListener() {
+                                                  private int lastFirstVisibleItem;
+
+                                                  @Override
+                                                  public void onScrollStateChanged(AbsListView view, int scrollState) {
+                                                  }
+
+                                                  @Override
+                                                  public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                                                      if (lastFirstVisibleItem < firstVisibleItem) {
+                                                          // scroll down -> hide the floating buttons
+                                                          MainActivity.mainFab.setVisibility(View.GONE);
+                                                          MainActivity.summaryFab.setVisibility(View.GONE);
+                                                          MainActivity.goodsFab.setVisibility(View.GONE);
+                                                          MainActivity.scanFab.setVisibility(View.GONE);
+                                                          MainActivity.searchFab.setVisibility(View.GONE);
+                                                          MainActivity.uploadFab.setVisibility(View.GONE);
+                                                          MainActivity.downloadFab.setVisibility(View.GONE);
+                                                      }
+                                                      if (lastFirstVisibleItem > firstVisibleItem) {
+                                                          // scroll up -> visible the floating buttons
+                                                          MainActivity.mainFab.setVisibility(View.VISIBLE);
+                                                      }
+                                                      lastFirstVisibleItem = firstVisibleItem;
+                                                  }
+                                              });
+
+
         goodsMainTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                goodsMainTabLayout.getTabAt(0).setText("Tất Cả \n10");
+                goodsAll.clear();
+                goodsAll = goodsLocalDatabase.getAllGoods();
+                goodsDone.clear();
+                goodsDone = goodsLocalDatabase.getGoodsBaseSts("600");
+                goodsNotDone.clear();
+                goodsNotDone = goodsLocalDatabase.getGoodsBaseSts("500");
+
+                try {
+                    goodsMainTabLayout.getTabAt(0).setText("Tất Cả \n" + goodsAll.size() );
+                } catch (NullPointerException e) {
+                    goodsMainTabLayout.getTabAt(0).setText("Tất Cả \n0" );
+                }
+
+                try {
+                    goodsMainTabLayout.getTabAt(1).setText("Hoàn Thành \n" + goodsDone.size() );
+                } catch (NullPointerException e) {
+                    goodsMainTabLayout.getTabAt(0).setText("Hoàn Thành \n0" );
+                }
+
+                try {
+                    goodsMainTabLayout.getTabAt(2).setText("Chưa Xong \n" + goodsNotDone.size() );
+                } catch (NullPointerException e) {
+                    goodsMainTabLayout.getTabAt(0).setText("Chưa Xong \n0" );
+                }
 
                 if (tab.getPosition() == 0) {
-                    goodsAll.clear();
-                    goodsAll = goodsLocalDatabase.getAllGoods();
+                    //goodsAll.clear();
+                    //goodsAll = goodsLocalDatabase.getAllGoods();
                     goodsMainListview.setAdapter(new GoodsFragmentListAdapter(getActivity(), goodsAll));
 
                    // Toast.makeText(getActivity(),goodsAll.get(goodsAll.size()-1).getGoodsName(),Toast.LENGTH_SHORT).show();
 
                 } else if (tab.getPosition() == 1) {
 
-                    goodsDone.clear();
-                    goodsDone = goodsLocalDatabase.getGoodsBaseSts("600");
+                    //goodsDone.clear();
+                    //goodsDone = goodsLocalDatabase.getGoodsBaseSts("600");
                     goodsMainListview.setAdapter(new GoodsFragmentListAdapter(getActivity(), goodsDone));
 
                 } else if (tab.getPosition() == 2) {
-                    goodsNotDone.clear();
-                    goodsNotDone = goodsLocalDatabase.getGoodsBaseSts("500");
+                    //goodsNotDone.clear();
+                    //goodsNotDone = goodsLocalDatabase.getGoodsBaseSts("500");
                     goodsMainListview.setAdapter(new GoodsFragmentListAdapter(getActivity(), goodsNotDone));
 
                 } else if (tab.getPosition() == 3) {
                    MainActivity.mainViewPager.setCurrentItem(2);
+                    MainActivity.mainFab.setVisibility(View.VISIBLE);
 
                 }
             }

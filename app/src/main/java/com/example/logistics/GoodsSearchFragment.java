@@ -33,7 +33,10 @@ public class GoodsSearchFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private List<GoodsInformation> goodsSearchResult = new ArrayList<>();
+    private List<GoodsInformation> goodsSearchResult;
+    //private GoodsLocalDatabase goodsLocalDatabase = new GoodsLocalDatabase(getActivity());
+    private String goodsSearchName;
+    private String goodsSearchTopicName;
 
     public GoodsSearchFragment() {
         // Required empty public constructor
@@ -73,25 +76,62 @@ public class GoodsSearchFragment extends Fragment {
 
         Spinner goodsSearchTopic = view.findViewById(R.id.goods_search_topic);
         final EditText goodsSearchItem = view.findViewById(R.id.goods_search_item);
-        ListView goodsSearchLv = view.findViewById(R.id.goods_search_lv);
+        final ListView goodsSearchLv = view.findViewById(R.id.goods_search_lv);
         Button searchBt = view.findViewById(R.id.goods_search_bt);
         Button searchCloseBt = view.findViewById(R.id.goods_search_close_bt);
 
-        String[] goodsSearchTopicList = new String[]{"Mã Hàng","Trạng Thái Hàng","Vị Trí Hàng","Tên Người Nhận","Số Điện Thoại Người Nhận",
+        final String[] goodsSearchTopicList = new String[]{"Mã Hàng","Trạng Thái Hàng","Vị Trí Hàng","Tên Người Nhận","Số Điện Thoại Người Nhận",
         "Tên Người Gửi","Số Điện Thoại Người Gửi","Ngày Gửi"};
 
         ArrayAdapter<String> adapterSearchTopic = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, goodsSearchTopicList);
         goodsSearchTopic.setAdapter(adapterSearchTopic);
 
         // set selection value of spinner
+        goodsSearchTopic.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+                switch (position) {
+                    case 0:
+                        goodsSearchTopicName = "Mã Hàng";
+                        break;
+                    case 1:
+                        goodsSearchTopicName = "Trạng Thái Hàng";
+                        break;
+                    case 2:
+                        goodsSearchTopicName = "Vị Trí Hàng";
+                        break;
+                    case 3:
+                        goodsSearchTopicName = "Tên Người Nhận";
+                        break;
+                    case 4:
+                        goodsSearchTopicName = "Số Điện Thoại Người Nhận";
+                        break;
+                    case 5:
+                        goodsSearchTopicName = "Tên Người Gửi";
+                        break;
+                    case 6:
+                        goodsSearchTopicName = "Số Điện Thoại Người Gửi";
+                        break;
+                    case 7:
+                        goodsSearchTopicName = "Ngày Gửi";
+                        break;
+                }
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                goodsSearchTopicName ="";
+            }
+        });
 
 
         searchCloseBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //getFragmentManager().popBackStackImmediate();
-                Toast.makeText(getActivity(),"Mã Hàng",Toast.LENGTH_SHORT).show();
+               // getFragmentManager().popBackStackImmediate();
+                // getActivity().getFragmentManager().popBackStack();
+                getActivity().onBackPressed();
 
             }
         });
@@ -100,14 +140,77 @@ public class GoodsSearchFragment extends Fragment {
         searchBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goodsSearchResult.clear();
-                if (goodsSearchItem.getText().toString().matches("Mã Hàng")){
-                    Toast.makeText(getActivity(),"Mã Hàng",Toast.LENGTH_SHORT).show();
+                goodsSearchLv.setAdapter(null);
+                GoodsLocalDatabase goodsLocalDatabase = new GoodsLocalDatabase(getActivity());
+                goodsSearchName = goodsSearchItem.getText().toString();
+                goodsSearchResult = new ArrayList<>();
+                if (goodsSearchName.matches("") || goodsSearchTopicName.matches("")) {
+                    Toast.makeText(getActivity(),"Hãy điền đủ thông tin",Toast.LENGTH_SHORT).show();
+                }else {
+                    if (goodsSearchTopicName.matches("Mã Hàng")){
+                        try {
+                            goodsSearchResult = goodsLocalDatabase.getGoodsBaseCode(goodsSearchName);
+                        } catch (NullPointerException e) {
+                            Toast.makeText(getActivity(),"Không Tìm Thấy Kết Quả Nào",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    if (goodsSearchTopicName.matches("Trạng Thái Hàng")){
+                        try {
+                            goodsSearchResult = goodsLocalDatabase.getGoodsBaseSts(goodsSearchName);
+                        } catch (NullPointerException e) {
+                            Toast.makeText(getActivity(),"Không Tìm Thấy Kết Quả Nào",Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+
+                    if (goodsSearchTopicName.matches("Vị Trí Hàng")){
+                        try {
+                            goodsSearchResult = goodsLocalDatabase.getGoodsBaseLocation(goodsSearchName);
+                        } catch (NullPointerException e) {
+                            Toast.makeText(getActivity(),"Không Tìm Thấy Kết Quả Nào",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    if (goodsSearchTopicName.matches("Tên Người Nhận")){
+                        try {
+                            goodsSearchResult = goodsLocalDatabase.getGoodsBaseReceiveName(goodsSearchName);
+                        } catch (NullPointerException e) {
+                            Toast.makeText(getActivity(),"Không Tìm Thấy Kết Quả Nào",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    if (goodsSearchTopicName.matches("Số Điện Thoại Người Nhận")){
+                        try {
+                            goodsSearchResult = goodsLocalDatabase.getGoodsBaseReceivePhone(goodsSearchName);
+                        } catch (NullPointerException e) {
+                            Toast.makeText(getActivity(),"Không Tìm Thấy Kết Quả Nào",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    if (goodsSearchTopicName.matches("Tên Người Gửi")){
+                        try {
+                            goodsSearchResult = goodsLocalDatabase.getGoodsBaseSendName(goodsSearchName);
+                        } catch (NullPointerException e) {
+                            Toast.makeText(getActivity(),"Không Tìm Thấy Kết Quả Nào",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    if (goodsSearchTopicName.matches("Số Điện Thoại Người Gửi")){
+                        try {
+                            goodsSearchResult = goodsLocalDatabase.getGoodsBaseSendPhone(goodsSearchName);
+                        } catch (NullPointerException e) {
+                            Toast.makeText(getActivity(),"Không Tìm Thấy Kết Quả Nào",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    if (goodsSearchResult != null && !goodsSearchResult.isEmpty()){
+                        goodsSearchLv.setAdapter(new GoodsFragmentListAdapter(getActivity(), goodsSearchResult));
+                    }else {
+                        Toast.makeText(getActivity(),"Không Tìm Thấy Kết Quả Nào",Toast.LENGTH_SHORT).show();
+                    }
                 }
 
-                if (goodsSearchItem.getText().toString().matches("Trạng Thái Hàng")){
-                    Toast.makeText(getActivity(),"Trạng Thái Hàng",Toast.LENGTH_SHORT).show();
-                }
 
 
             }
