@@ -135,31 +135,31 @@ public class GoodsFragment extends Fragment {
         // detect scrolling direction
 
         goodsMainListview.setOnScrollListener(new AbsListView.OnScrollListener() {
-                                                  private int lastFirstVisibleItem;
+            private int lastFirstVisibleItem;
 
-                                                  @Override
-                                                  public void onScrollStateChanged(AbsListView view, int scrollState) {
-                                                  }
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
 
-                                                  @Override
-                                                  public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                                                      if (lastFirstVisibleItem < firstVisibleItem) {
-                                                          // scroll down -> hide the floating buttons
-                                                          MainActivity.mainFab.setVisibility(View.GONE);
-                                                          MainActivity.summaryFab.setVisibility(View.GONE);
-                                                          MainActivity.goodsFab.setVisibility(View.GONE);
-                                                          MainActivity.scanFab.setVisibility(View.GONE);
-                                                          MainActivity.searchFab.setVisibility(View.GONE);
-                                                          MainActivity.uploadFab.setVisibility(View.GONE);
-                                                          MainActivity.downloadFab.setVisibility(View.GONE);
-                                                      }
-                                                      if (lastFirstVisibleItem > firstVisibleItem) {
-                                                          // scroll up -> visible the floating buttons
-                                                          MainActivity.mainFab.setVisibility(View.VISIBLE);
-                                                      }
-                                                      lastFirstVisibleItem = firstVisibleItem;
-                                                  }
-                                              });
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (lastFirstVisibleItem < firstVisibleItem) {
+                    // scroll down -> hide the floating buttons
+                    MainActivity.mainFab.setVisibility(View.GONE);
+                    MainActivity.summaryFab.setVisibility(View.GONE);
+                    MainActivity.goodsFab.setVisibility(View.GONE);
+                    MainActivity.scanFab.setVisibility(View.GONE);
+                    MainActivity.searchFab.setVisibility(View.GONE);
+                    MainActivity.uploadFab.setVisibility(View.GONE);
+                    MainActivity.downloadFab.setVisibility(View.GONE);
+                }
+                if (lastFirstVisibleItem > firstVisibleItem) {
+                    // scroll up -> visible the floating buttons
+                    MainActivity.mainFab.setVisibility(View.VISIBLE);
+                }
+                lastFirstVisibleItem = firstVisibleItem;
+            }
+        });
 
 
         goodsMainTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -196,7 +196,7 @@ public class GoodsFragment extends Fragment {
                     //goodsAll = goodsLocalDatabase.getAllGoods();
                     goodsMainListview.setAdapter(new GoodsFragmentListAdapter(getActivity(), goodsAll));
 
-                   // Toast.makeText(getActivity(),goodsAll.get(goodsAll.size()-1).getGoodsName(),Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(getActivity(),goodsAll.get(goodsAll.size()-1).getGoodsName(),Toast.LENGTH_SHORT).show();
 
                 } else if (tab.getPosition() == 1) {
 
@@ -210,10 +210,14 @@ public class GoodsFragment extends Fragment {
                     goodsMainListview.setAdapter(new GoodsFragmentListAdapter(getActivity(), goodsNotDone));
 
                 } else if (tab.getPosition() == 3) {
-                   MainActivity.mainViewPager.setCurrentItem(2);
+                    MainActivity.mainViewPager.setCurrentItem(2);
                     MainActivity.mainFab.setVisibility(View.VISIBLE);
 
+                } else if (tab.getPosition() == 4) {
+                    MainActivity.mainViewPager.setCurrentItem(3);
+                    MainActivity.mainFab.setVisibility(View.VISIBLE);
                 }
+
             }
 
             @Override
@@ -227,18 +231,28 @@ public class GoodsFragment extends Fragment {
             }
         });
 
-                    return view;
+        return view;
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         if (v.getId() == R.id.goods_main_listview) {
+
+            MainActivity.curActiveFragment = 2; //set active fragment
             ListView lv = (ListView) v;
             AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) menuInfo;
             //AdapterView.AdapterContextMenuInfo acmi = getActivity().getMenuInflater().inflate(R.menu.frag);
             Object obj = (Object) lv.getItemAtPosition(acmi.position);
             //itemIDSelectedFromListview = lv.getAdapter().getItemId(acmi.position);
             itemIDSelectedFromListview = acmi.position;
+
+            if (goodsMainTabLayout.getSelectedTabPosition() ==0){
+                MainActivity.goodsSelectFromListview = goodsAll.get(itemIDSelectedFromListview);
+            }else if(goodsMainTabLayout.getSelectedTabPosition() ==1) {
+                MainActivity.goodsSelectFromListview = goodsDone.get(itemIDSelectedFromListview);
+            }else if (goodsMainTabLayout.getSelectedTabPosition() ==2){
+                MainActivity.goodsSelectFromListview = goodsNotDone.get(itemIDSelectedFromListview);
+            }
 
             menu.add("Chi Tiết");
             menu.add("Gọi Người Gửi");
@@ -262,12 +276,14 @@ public class GoodsFragment extends Fragment {
 
         if (item.getTitle() == "Chi Tiết") {
 
-            goodsAllInforPopup(getActivity().getWindow().getDecorView().getRootView());
+            //goodsAllInforPopup(getActivity().getWindow().getDecorView().getRootView());
+            MainActivity.goodsAllInforPopup(getActivity().getWindow().getDecorView().getRootView(),getActivity(),MainActivity.goodsSelectFromListview);
 
 
         } else if(item.getTitle() == "Gọi Người Gửi") {
 
-            makeCall(goodsSelectedFromLv.getGoodsSendPhone());
+            //makeCall(goodsSelectedFromLv.getGoodsSendPhone());
+            MainActivity.makeCall(getActivity(),MainActivity.goodsSelectFromListview.getGoodsSendPhone());
 
         } else if(item.getTitle() == "Gọi Người Nhận") {
             makeCall(goodsSelectedFromLv.getGoodsReceivePhone());
@@ -559,7 +575,7 @@ public class GoodsFragment extends Fragment {
 
 
 
-            goodsUpdateClearBt.setOnClickListener(new View.OnClickListener() {
+        goodsUpdateClearBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 popupWindow.dismiss();
@@ -577,10 +593,10 @@ public class GoodsFragment extends Fragment {
         goodsUpdateBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               goodsSelectedFromLv.setGoodsCode(goodsUpdateGoodsID.getText().toString());
-               goodsSelectedFromLv.setGoodsType(goodsUpdateType.getText().toString());
-               goodsSelectedFromLv.setGoodsSendName(goodsUpdateSenderName.getText().toString());
-               goodsSelectedFromLv.setGoodsSendPhone(goodsUpdateSenderPhone.getText().toString());
+                goodsSelectedFromLv.setGoodsCode(goodsUpdateGoodsID.getText().toString());
+                goodsSelectedFromLv.setGoodsType(goodsUpdateType.getText().toString());
+                goodsSelectedFromLv.setGoodsSendName(goodsUpdateSenderName.getText().toString());
+                goodsSelectedFromLv.setGoodsSendPhone(goodsUpdateSenderPhone.getText().toString());
                 goodsSelectedFromLv.setGoodsSendCity(goodsUpdateSenderAddress.getText().toString()); // this one need to clarify, currently it not correct
                 goodsSelectedFromLv.setGoodsSendDate(goodsUpdateSenderDate.getText().toString());
                 goodsSelectedFromLv.setGoodsReceiveName(goodsUpdateReceiveName.getText().toString());

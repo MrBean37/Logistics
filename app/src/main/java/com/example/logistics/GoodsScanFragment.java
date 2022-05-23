@@ -99,7 +99,7 @@ public class GoodsScanFragment extends Fragment {
         goodsScanListView = (ListView) view.findViewById(R.id.goodsScanListView);
         Button goodsBarCodeScanBt = (Button) view.findViewById(R.id.goods_scan_barcode);
         Button goodsQRCodeScanBt = (Button) view.findViewById(R.id.goods_scan_QRcode);
-        //registerForContextMenu(toolScanListView);
+        registerForContextMenu(goodsScanListView);
         goodsBarCodeScanBt.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -123,11 +123,14 @@ public class GoodsScanFragment extends Fragment {
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+
+        // clear content in listview
+
+        goodsScanListView.setAdapter(null);
         //retrieve scan result
         IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
         codeContent = scanningResult.getContents();
         codeFormat = scanningResult.getFormatName();
-        goodsScanIDInMainList = -1;
         goodsLocalDatabase = new GoodsLocalDatabase(getActivity());
         //registerForContextMenu(toolScanListView);
         if (scanningResult.getContents() != null) {
@@ -141,6 +144,8 @@ public class GoodsScanFragment extends Fragment {
 
             if (searchResult != null && !searchResult.isEmpty()){
                 goodsScanListView.setAdapter(new GoodsFragmentListAdapter(getActivity(), searchResult));
+            }else {
+                showPopup(getActivity().getWindow().getDecorView().getRootView(),codeContent);
             }
 
         } else {
