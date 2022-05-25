@@ -9,6 +9,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,11 +20,13 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -92,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         // check permission
         if (getApplicationContext().checkSelfPermission(Manifest.permission.CALL_PHONE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -146,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_main);
+
         mainViewPager = findViewById(R.id.main_view_page);
         mainFab =findViewById(R.id.main_fab);
         summaryFab =findViewById(R.id.summary_fab);
@@ -319,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public static void goodsAllInforPopup(View view, final Context context, final GoodsInformation goodsInformation) {
+    public static void goodsAllInforPopup(final View view, final Context context, final GoodsInformation goodsInformation) {
 
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater)
@@ -430,6 +433,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 popupWindow.dismiss();
+                goodsUpdateInforPopup(view,context,goodsSelectFromListview);
 
             }
         });
@@ -448,7 +452,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void goodsUpdateInforPopup(View view, final Context context, final GoodsInformation goodsInformation) {
+    public static void goodsUpdateInforPopup(View view, final Context context, final GoodsInformation goodsInformation) {
 
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater)
@@ -495,7 +499,7 @@ public class MainActivity extends AppCompatActivity {
         Spinner goodsMainSts = popupView.findViewById(R.id.goods_update_sts);
         final EditText goodsUpdateGoodsQuantity = popupView.findViewById(R.id.goods_update_goods_quantity);
         final EditText goodsUpdateMoney = popupView.findViewById(R.id.goods_update_money);
-        EditText goodsUpdatePrice = popupView.findViewById(R.id.goods_update_goods_price);
+        final EditText goodsUpdatePrice = popupView.findViewById(R.id.goods_update_goods_price);
         final EditText goodsUpdateNote = popupView.findViewById(R.id.goods_update_goods_notes);
         Button goodsUpdateClearBt = popupView.findViewById(R.id.goods_update_clear_bt);
         Button goodsUpdateReceiveCallBt = popupView.findViewById(R.id.goods_update_call_receiver_bt);
@@ -581,7 +585,20 @@ public class MainActivity extends AppCompatActivity {
         goodsUpdateClearBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popupWindow.dismiss();
+                goodsUpdateGoodsID.setText("");
+                goodsUpdateType.setText("");
+                goodsUpdateSenderName.setText("");
+                goodsUpdateSenderPhone.setText("");
+                goodsUpdateSenderAddress.setText("");
+                goodsUpdateSenderDate.setText("");
+                goodsUpdateReceiveName.setText("");
+                goodsUpdateReceivePhone.setText("");
+                goodsUpdateReceiveAddress.setText("");
+                goodsUpdateReceiveDate.setText("");
+                goodsUpdateGoodsQuantity.setText("");
+                goodsUpdateMoney.setText("");
+                goodsUpdatePrice.setText("");
+                goodsUpdateNote.setText("");
 
             }
         });
@@ -613,6 +630,8 @@ public class MainActivity extends AppCompatActivity {
                 goodsInformation.setGoodsNote(goodsUpdateNote.getText().toString());
 
                 goodsLocalDatabase.updateGoods(goodsInformation);
+
+                Toast.makeText(context,"Đã Hoàn Thành Cập Nhật",Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -662,6 +681,7 @@ public class MainActivity extends AppCompatActivity {
         }else if(item.getTitle() == "Xóa") {
             GoodsLocalDatabase goodsLocalDatabase = new GoodsLocalDatabase(this);
             goodsLocalDatabase.deleteGoods(goodsSelectFromListview);
+            Toast.makeText(this,"Đã Xóa Xong",Toast.LENGTH_SHORT).show();
 
         }else {return false;
 
@@ -671,4 +691,36 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // detect scrolling direction
+
+    public static void visibleFloatButtonBaseScrollDirect(ListView listView){
+        // detect scrolling direction
+
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            private int lastFirstVisibleItem;
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (lastFirstVisibleItem < firstVisibleItem) {
+                    // scroll down -> hide the floating buttons
+                    MainActivity.mainFab.setVisibility(View.GONE);
+                    MainActivity.summaryFab.setVisibility(View.GONE);
+                    MainActivity.goodsFab.setVisibility(View.GONE);
+                    MainActivity.scanFab.setVisibility(View.GONE);
+                    MainActivity.searchFab.setVisibility(View.GONE);
+                    MainActivity.uploadFab.setVisibility(View.GONE);
+                    MainActivity.downloadFab.setVisibility(View.GONE);
+                }
+                if (lastFirstVisibleItem > firstVisibleItem) {
+                    // scroll up -> visible the floating buttons
+                    MainActivity.mainFab.setVisibility(View.VISIBLE);
+                }
+                lastFirstVisibleItem = firstVisibleItem;
+            }
+        });
+    }
 }

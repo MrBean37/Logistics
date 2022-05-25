@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +39,7 @@ public class GoodsSearchFragment extends Fragment {
     //private GoodsLocalDatabase goodsLocalDatabase = new GoodsLocalDatabase(getActivity());
     private String goodsSearchName;
     private String goodsSearchTopicName;
+    private int itemIDSelectedFromListview;
 
     public GoodsSearchFragment() {
         // Required empty public constructor
@@ -80,6 +82,12 @@ public class GoodsSearchFragment extends Fragment {
         final ListView goodsSearchLv = view.findViewById(R.id.goods_search_lv);
         Button searchBt = view.findViewById(R.id.goods_search_bt);
         Button searchCloseBt = view.findViewById(R.id.goods_search_close_bt);
+
+        // set context menu for the listview
+        registerForContextMenu(goodsSearchLv);
+
+        // detect scroll direction of the listview and set visible or invisible for floating button
+        MainActivity.visibleFloatButtonBaseScrollDirect(goodsSearchLv);
 
         final String[] goodsSearchTopicList = new String[]{"Mã Hàng","Trạng Thái Hàng","Vị Trí Hàng","Tên Người Nhận","Số Điện Thoại Người Nhận",
         "Tên Người Gửi","Số Điện Thoại Người Gửi","Ngày Gửi"};
@@ -219,5 +227,28 @@ public class GoodsSearchFragment extends Fragment {
 
 
         return view;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        if (v.getId() == R.id.goods_search_lv) {
+
+            MainActivity.curActiveFragment = 3; //set active fragment
+            ListView lv = (ListView) v;
+            AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) menuInfo;
+            //AdapterView.AdapterContextMenuInfo acmi = getActivity().getMenuInflater().inflate(R.menu.frag);
+            Object obj = (Object) lv.getItemAtPosition(acmi.position);
+            //itemIDSelectedFromListview = lv.getAdapter().getItemId(acmi.position);
+            itemIDSelectedFromListview = acmi.position;
+            MainActivity.goodsSelectFromListview = goodsSearchResult.get(itemIDSelectedFromListview);
+
+
+            menu.add("Chi Tiết");
+            menu.add("Gọi Người Gửi");
+            menu.add("Gọi Người Nhận");
+            menu.add("Cập Nhật");
+            menu.add("Xóa");
+
+        }
     }
 }

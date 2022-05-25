@@ -8,11 +8,13 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 
 import android.text.Layout;
+import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -46,7 +48,7 @@ public class GoodsScanFragment extends Fragment {
     private String mParam2;
     public String codeContent;
     public String codeFormat;
-    public static int goodsScanIDInMainList;
+    public int itemIDSelectedFromListview;
     public ListView goodsScanListView;
     public Fragment myFragment;
     public List<GoodsInformation> searchResult;
@@ -100,6 +102,9 @@ public class GoodsScanFragment extends Fragment {
         Button goodsBarCodeScanBt = (Button) view.findViewById(R.id.goods_scan_barcode);
         Button goodsQRCodeScanBt = (Button) view.findViewById(R.id.goods_scan_QRcode);
         registerForContextMenu(goodsScanListView);
+
+        // detect scroll direction of the listview and set visible or invisible for floating button
+        MainActivity.visibleFloatButtonBaseScrollDirect(goodsScanListView);
         goodsBarCodeScanBt.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -208,6 +213,29 @@ public class GoodsScanFragment extends Fragment {
             }
 
         });
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        if (v.getId() == R.id.goodsScanListView) {
+
+            MainActivity.curActiveFragment = 4; //set active fragment
+            ListView lv = (ListView) v;
+            AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) menuInfo;
+            //AdapterView.AdapterContextMenuInfo acmi = getActivity().getMenuInflater().inflate(R.menu.frag);
+            Object obj = (Object) lv.getItemAtPosition(acmi.position);
+            //itemIDSelectedFromListview = lv.getAdapter().getItemId(acmi.position);
+            itemIDSelectedFromListview = acmi.position;
+            MainActivity.goodsSelectFromListview = searchResult.get(itemIDSelectedFromListview);
+
+
+            menu.add("Chi Tiết");
+            menu.add("Gọi Người Gửi");
+            menu.add("Gọi Người Nhận");
+            menu.add("Cập Nhật");
+            menu.add("Xóa");
+
+        }
     }
 
 }
