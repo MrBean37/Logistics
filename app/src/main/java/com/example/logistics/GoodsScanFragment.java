@@ -109,17 +109,7 @@ public class GoodsScanFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-
-                IntentIntegrator integrator = new IntentIntegrator(getActivity()).forSupportFragment(myFragment);
-
-                //IntentIntegrator integrator = new IntentIntegrator(getActivity());
-                // use forSupportFragment or forFragment method to use fragments instead of activity
-                integrator.setDesiredBarcodeFormats(IntentIntegrator.ONE_D_CODE_TYPES);
-                integrator.setPrompt("Scan Mã Hàng");
-                integrator.setBeepEnabled(true);
-                integrator.setOrientationLocked(true);
-                integrator.setCaptureActivity(Capture.class);
-                integrator.initiateScan();
+                MainActivity.scanBarcode(getActivity(),myFragment);
 
             }
         });
@@ -136,6 +126,7 @@ public class GoodsScanFragment extends Fragment {
         IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
         codeContent = scanningResult.getContents();
         codeFormat = scanningResult.getFormatName();
+        MainActivity.scanIDResult = codeContent;
         goodsLocalDatabase = new GoodsLocalDatabase(getActivity());
         //registerForContextMenu(toolScanListView);
         if (scanningResult.getContents() != null) {
@@ -219,7 +210,6 @@ public class GoodsScanFragment extends Fragment {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         if (v.getId() == R.id.goodsScanListView) {
 
-            MainActivity.curActiveFragment = 4; //set active fragment
             ListView lv = (ListView) v;
             AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) menuInfo;
             //AdapterView.AdapterContextMenuInfo acmi = getActivity().getMenuInflater().inflate(R.menu.frag);

@@ -68,6 +68,7 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         Log.i(TAG, "MyDatabaseHelper.onCreate ... ");
         // Script.
+        // have to set primary key to autoincrement to avoid dupplicate when add new one
         String script = "CREATE TABLE " + TABLE_NOTE + "("
                 + COLUMN_GOODS_ID + " INTEGER PRIMARY KEY,"+ COLUMN_GOODS_CODE + " TEXT,"
                 + COLUMN_GOODS_NAME + " TEXT,"+ COLUMN_GOODS_TYPE + " TEXT,"+ COLUMN_GOODS_STS + " TEXT,"
@@ -155,8 +156,8 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues value = new ContentValues();
-
-        value.put(COLUMN_GOODS_ID,goods.getGoodsID());
+        // not add the ID (primary key) to avoid dupplicate ID -> let blank then it will automatic generate by SQLLite
+       // value.put(COLUMN_GOODS_ID,goods.getGoodsID());
         value.put(COLUMN_GOODS_CODE,goods.getGoodsCode());
         value.put(COLUMN_GOODS_NAME,goods.getGoodsName());
         value.put(COLUMN_GOODS_TYPE,goods.getGoodsType());

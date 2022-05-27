@@ -1,5 +1,8 @@
 package com.example.logistics;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -17,6 +20,9 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +46,7 @@ public class GoodsSearchFragment extends Fragment {
     private String goodsSearchName;
     private String goodsSearchTopicName;
     private int itemIDSelectedFromListview;
+    public Fragment myFragment;
 
     public GoodsSearchFragment() {
         // Required empty public constructor
@@ -70,6 +77,7 @@ public class GoodsSearchFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        myFragment = this;
     }
 
     @Override
@@ -89,8 +97,8 @@ public class GoodsSearchFragment extends Fragment {
         // detect scroll direction of the listview and set visible or invisible for floating button
         MainActivity.visibleFloatButtonBaseScrollDirect(goodsSearchLv);
 
-        final String[] goodsSearchTopicList = new String[]{"Mã Hàng","Trạng Thái Hàng","Vị Trí Hàng","Tên Người Nhận","Số Điện Thoại Người Nhận",
-        "Tên Người Gửi","Số Điện Thoại Người Gửi","Ngày Gửi"};
+        final String[] goodsSearchTopicList = new String[]{"Mã Hàng", "Trạng Thái Hàng", "Vị Trí Hàng", "Tên Người Nhận", "Số Điện Thoại Người Nhận",
+                "Tên Người Gửi", "Số Điện Thoại Người Gửi", "Ngày Gửi"};
 
         ArrayAdapter<String> adapterSearchTopic = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, goodsSearchTopicList);
         goodsSearchTopic.setAdapter(adapterSearchTopic);
@@ -130,7 +138,7 @@ public class GoodsSearchFragment extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                goodsSearchTopicName ="";
+                goodsSearchTopicName = "";
             }
         });
 
@@ -138,9 +146,8 @@ public class GoodsSearchFragment extends Fragment {
         searchCloseBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // getFragmentManager().popBackStackImmediate();
-                // getActivity().getFragmentManager().popBackStack();
-                getActivity().onBackPressed();
+
+                MainActivity.mainViewPager.setCurrentItem(MainActivity.lastActiveFragment);  // go back to last fragment
 
             }
         });
@@ -154,72 +161,71 @@ public class GoodsSearchFragment extends Fragment {
                 goodsSearchName = goodsSearchItem.getText().toString();
                 goodsSearchResult = new ArrayList<>();
                 if (goodsSearchName.matches("") || goodsSearchTopicName.matches("")) {
-                    Toast.makeText(getActivity(),"Hãy điền đủ thông tin",Toast.LENGTH_SHORT).show();
-                }else {
-                    if (goodsSearchTopicName.matches("Mã Hàng")){
+                    Toast.makeText(getActivity(), "Hãy điền đủ thông tin", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (goodsSearchTopicName.matches("Mã Hàng")) {
                         try {
                             goodsSearchResult = goodsLocalDatabase.getGoodsBaseCode(goodsSearchName);
                         } catch (NullPointerException e) {
-                            Toast.makeText(getActivity(),"Không Tìm Thấy Kết Quả Nào",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Không Tìm Thấy Kết Quả Nào", Toast.LENGTH_SHORT).show();
                         }
                     }
 
-                    if (goodsSearchTopicName.matches("Trạng Thái Hàng")){
+                    if (goodsSearchTopicName.matches("Trạng Thái Hàng")) {
                         try {
                             goodsSearchResult = goodsLocalDatabase.getGoodsBaseSts(goodsSearchName);
                         } catch (NullPointerException e) {
-                            Toast.makeText(getActivity(),"Không Tìm Thấy Kết Quả Nào",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Không Tìm Thấy Kết Quả Nào", Toast.LENGTH_SHORT).show();
                         }
 
                     }
 
-                    if (goodsSearchTopicName.matches("Vị Trí Hàng")){
+                    if (goodsSearchTopicName.matches("Vị Trí Hàng")) {
                         try {
                             goodsSearchResult = goodsLocalDatabase.getGoodsBaseLocation(goodsSearchName);
                         } catch (NullPointerException e) {
-                            Toast.makeText(getActivity(),"Không Tìm Thấy Kết Quả Nào",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Không Tìm Thấy Kết Quả Nào", Toast.LENGTH_SHORT).show();
                         }
                     }
 
-                    if (goodsSearchTopicName.matches("Tên Người Nhận")){
+                    if (goodsSearchTopicName.matches("Tên Người Nhận")) {
                         try {
                             goodsSearchResult = goodsLocalDatabase.getGoodsBaseReceiveName(goodsSearchName);
                         } catch (NullPointerException e) {
-                            Toast.makeText(getActivity(),"Không Tìm Thấy Kết Quả Nào",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Không Tìm Thấy Kết Quả Nào", Toast.LENGTH_SHORT).show();
                         }
                     }
 
-                    if (goodsSearchTopicName.matches("Số Điện Thoại Người Nhận")){
+                    if (goodsSearchTopicName.matches("Số Điện Thoại Người Nhận")) {
                         try {
                             goodsSearchResult = goodsLocalDatabase.getGoodsBaseReceivePhone(goodsSearchName);
                         } catch (NullPointerException e) {
-                            Toast.makeText(getActivity(),"Không Tìm Thấy Kết Quả Nào",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Không Tìm Thấy Kết Quả Nào", Toast.LENGTH_SHORT).show();
                         }
                     }
 
-                    if (goodsSearchTopicName.matches("Tên Người Gửi")){
+                    if (goodsSearchTopicName.matches("Tên Người Gửi")) {
                         try {
                             goodsSearchResult = goodsLocalDatabase.getGoodsBaseSendName(goodsSearchName);
                         } catch (NullPointerException e) {
-                            Toast.makeText(getActivity(),"Không Tìm Thấy Kết Quả Nào",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Không Tìm Thấy Kết Quả Nào", Toast.LENGTH_SHORT).show();
                         }
                     }
 
-                    if (goodsSearchTopicName.matches("Số Điện Thoại Người Gửi")){
+                    if (goodsSearchTopicName.matches("Số Điện Thoại Người Gửi")) {
                         try {
                             goodsSearchResult = goodsLocalDatabase.getGoodsBaseSendPhone(goodsSearchName);
                         } catch (NullPointerException e) {
-                            Toast.makeText(getActivity(),"Không Tìm Thấy Kết Quả Nào",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Không Tìm Thấy Kết Quả Nào", Toast.LENGTH_SHORT).show();
                         }
                     }
 
-                    if (goodsSearchResult != null && !goodsSearchResult.isEmpty()){
+                    if (goodsSearchResult != null && !goodsSearchResult.isEmpty()) {
                         goodsSearchLv.setAdapter(new GoodsFragmentListAdapter(getActivity(), goodsSearchResult));
-                    }else {
-                        Toast.makeText(getActivity(),"Không Tìm Thấy Kết Quả Nào",Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getActivity(), "Không Tìm Thấy Kết Quả Nào", Toast.LENGTH_SHORT).show();
                     }
                 }
-
 
 
             }
@@ -233,7 +239,6 @@ public class GoodsSearchFragment extends Fragment {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         if (v.getId() == R.id.goods_search_lv) {
 
-            MainActivity.curActiveFragment = 3; //set active fragment
             ListView lv = (ListView) v;
             AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) menuInfo;
             //AdapterView.AdapterContextMenuInfo acmi = getActivity().getMenuInflater().inflate(R.menu.frag);
@@ -250,5 +255,17 @@ public class GoodsSearchFragment extends Fragment {
             menu.add("Xóa");
 
         }
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        // clear content in listview
+
+        //retrieve scan result
+        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+        MainActivity.scanIDResult = scanningResult.getContents();
+        Toast.makeText(getActivity(), MainActivity.scanIDResult, Toast.LENGTH_SHORT).show();
+        //codeFormat = scanningResult.getFormatName();
+
+
     }
 }

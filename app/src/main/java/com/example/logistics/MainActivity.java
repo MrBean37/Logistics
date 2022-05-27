@@ -3,10 +3,14 @@ package com.example.logistics;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -33,9 +37,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -80,17 +87,20 @@ public class MainActivity extends AppCompatActivity {
     static public FloatingActionButton searchFab;
     static public FloatingActionButton uploadFab;
     static public FloatingActionButton downloadFab;
+    static public FloatingActionButton goodsAddFab;
 
     // table ID for hàng hóa
-
     //Fragment
     static public ViewPager mainViewPager;
 
     //Context menu and fragment active detect
-    //1 -Main; 2 - GoodsFragment; 3 - GoodsSearchFragment; 4-GoodsScanFragment
-    static public Integer curActiveFragment =1;
+    //0 -Main; 1 - GoodsFragment; 2 - GoodsSearchFragment; 3-GoodsScanFragment; 4- GoodsAddFragment
+    static public Integer curActiveFragment =0;
+    static public Integer lastActiveFragment =0;
     static public GoodsInformation goodsSelectFromListview = new GoodsInformation();
 
+    //Scan Result
+    static public String scanIDResult ="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
         searchFab =findViewById(R.id.search_fab);
         uploadFab =findViewById(R.id.upload_fab);
         downloadFab =findViewById(R.id.download_fab);
+        goodsAddFab =findViewById(R.id.add_goods_fab);
 
         //set float button visible and invisible
         //at begining all float button have to invisible
@@ -166,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
         searchFab.setVisibility(View.GONE);
         uploadFab.setVisibility(View.GONE);
         downloadFab.setVisibility(View.GONE);
+        goodsAddFab.setVisibility(View.GONE);
 
         mainFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -205,6 +217,12 @@ public class MainActivity extends AppCompatActivity {
                     downloadFab.setVisibility(View.GONE);
                 }
 
+                if(goodsAddFab.getVisibility()==View.GONE){
+                    goodsAddFab.setVisibility(View.VISIBLE);
+                }else {
+                    goodsAddFab.setVisibility(View.GONE);
+                }
+
             }
         });
 
@@ -217,48 +235,76 @@ public class MainActivity extends AppCompatActivity {
         summaryFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mainViewPager.setCurrentItem(0);
+
+                lastActiveFragment =  MainActivity.curActiveFragment; //set last fragment
+                curActiveFragment = 0; //set active fragment
                 summaryFab.setVisibility(View.GONE);
                 goodsFab.setVisibility(View.GONE);
                 scanFab.setVisibility(View.GONE);
                 searchFab.setVisibility(View.GONE);
                 uploadFab.setVisibility(View.GONE);
                 downloadFab.setVisibility(View.GONE);
+                goodsAddFab.setVisibility(View.GONE);
             }
         });
 
         goodsFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mainViewPager.setCurrentItem(1);
+                lastActiveFragment =  curActiveFragment; //set last fragment
+                curActiveFragment = 1; //set active fragment
                 summaryFab.setVisibility(View.GONE);
                 goodsFab.setVisibility(View.GONE);
                 scanFab.setVisibility(View.GONE);
                 searchFab.setVisibility(View.GONE);
                 uploadFab.setVisibility(View.GONE);
                 downloadFab.setVisibility(View.GONE);
+                goodsAddFab.setVisibility(View.GONE);
             }
         });
 
         searchFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mainViewPager.setCurrentItem(2);
+                lastActiveFragment =  curActiveFragment; //set last fragment
+                curActiveFragment = 2; //set active fragment
                 summaryFab.setVisibility(View.GONE);
                 goodsFab.setVisibility(View.GONE);
                 scanFab.setVisibility(View.GONE);
                 searchFab.setVisibility(View.GONE);
                 uploadFab.setVisibility(View.GONE);
                 downloadFab.setVisibility(View.GONE);
+                goodsAddFab.setVisibility(View.GONE);
             }
         });
 
         scanFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mainViewPager.setCurrentItem(3);
+                lastActiveFragment =  curActiveFragment; //set last fragment
+                curActiveFragment = 3; //set active fragment
                 summaryFab.setVisibility(View.GONE);
                 goodsFab.setVisibility(View.GONE);
                 scanFab.setVisibility(View.GONE);
                 searchFab.setVisibility(View.GONE);
                 uploadFab.setVisibility(View.GONE);
                 downloadFab.setVisibility(View.GONE);
+                goodsAddFab.setVisibility(View.GONE);
+            }
+        });
+
+        goodsAddFab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mainViewPager.setCurrentItem(4);
+                lastActiveFragment =  curActiveFragment; //set last fragment
+                curActiveFragment = 4; //set active fragment
+                summaryFab.setVisibility(View.GONE);
+                goodsFab.setVisibility(View.GONE);
+                scanFab.setVisibility(View.GONE);
+                searchFab.setVisibility(View.GONE);
+                uploadFab.setVisibility(View.GONE);
+                downloadFab.setVisibility(View.GONE);
+                goodsAddFab.setVisibility(View.GONE);
             }
         });
 
@@ -317,6 +363,7 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new GoodsFragment(), "Goods Infor");
         adapter.addFragment(new GoodsSearchFragment(),"Goods Search");
         adapter.addFragment(new GoodsScanFragment(),"Goods Scan");
+        adapter.addFragment(new GoodsAddFragment(),"Add New Goods");
 
         mainViewPager.setAdapter(adapter);
     }
@@ -653,6 +700,166 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public static void goodsAddPopup(View view, final Context context, final Activity activity, final Fragment fragment) {
+        final GoodsInformation goodsInformation = new GoodsInformation();
+        // inflate the layout of the popup window
+        LayoutInflater inflater = (LayoutInflater)
+                context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
+        //View popupView = inflater.inflate(R.layout.goods_update_all_infor, null);
+        View popupView = LayoutInflater.from(context).inflate(R.layout.goods_add_new, null);
+
+        // create the popup window
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        boolean focusable = true; // lets taps outside the popup also dismiss it
+        //final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        final PopupWindow popupWindow = new PopupWindow(popupView, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+
+        // show the popup window
+        // which view you pass in doesn't matter, it is only used for the window tolken
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+
+        // dismiss the popup window when touched
+        popupView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_OUTSIDE)
+                {
+                    popupWindow.dismiss();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        final EditText goodsAddGoodsID = popupView.findViewById(R.id.goods_add_goods_id);
+        final EditText goodsAddType = popupView.findViewById(R.id.goods_add_type);
+        final EditText goodsAddSenderName = popupView.findViewById(R.id.goods_add_sender_name);
+        final EditText goodsAddSenderPhone = popupView.findViewById(R.id.goods_add_sender_phone);
+        final EditText goodsAddSenderAddress = popupView.findViewById(R.id.goods_add_sender_address);
+        final EditText goodsAddSenderDate = popupView.findViewById(R.id.goods_add_sender_date);
+        final EditText goodsAddReceiveName = popupView.findViewById(R.id.goods_add_receiver_name);
+        final EditText goodsAddReceivePhone = popupView.findViewById(R.id.goods_add_receiver_phone);
+        final EditText goodsAddReceiveAddress = popupView.findViewById(R.id.goods_add_receiver_address);
+        final EditText goodsAddReceiveDate = popupView.findViewById(R.id.goods_add_receiver_date);
+        Spinner goodsAddSts = popupView.findViewById(R.id.goods_add_sts);
+        final EditText goodsAddGoodsQuantity = popupView.findViewById(R.id.goods_add_goods_quantity);
+        final EditText goodsAddMoney = popupView.findViewById(R.id.goods_add_money);
+        final EditText goodsAddPrice = popupView.findViewById(R.id.goods_add_goods_price);
+        final EditText goodsAddNote = popupView.findViewById(R.id.goods_add_goods_notes);
+        Button goodsAddClearBt = popupView.findViewById(R.id.goods_add_clear_bt);
+        Button goodsAddBt = popupView.findViewById(R.id.goods_add_bt);
+        Button goodsAddCloseBt = popupView.findViewById(R.id.goods_add_close_bt);
+        Button goodsAddScanBt = popupView.findViewById(R.id.goods_add_scan_bt);
+
+
+        //parameter for spinner
+        spinderGoodsStatus(context,goodsAddSts);
+
+
+        // set selection value of spinner
+        goodsAddSts.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+                switch (position) {
+                    case 0:
+                        goodsInformation.setGoodsSts("100");
+                        break;
+                    case 1:
+                        goodsInformation.setGoodsSts("200");
+                        break;
+                    case 2:
+                        goodsInformation.setGoodsSts("300");
+                        break;
+                    case 3:
+                        goodsInformation.setGoodsSts("400");
+                        break;
+                    case 4:
+                        goodsInformation.setGoodsSts("500");
+                        break;
+                    case 5:
+                        goodsInformation.setGoodsSts("600");
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                goodsInformation.setGoodsSts("100");
+            }
+        });
+
+        goodsAddClearBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goodsAddGoodsID.setText("");
+                goodsAddType.setText("");
+                goodsAddSenderName.setText("");
+                goodsAddSenderPhone.setText("");
+                goodsAddSenderAddress.setText("");
+                goodsAddSenderDate.setText("");
+                goodsAddReceiveName.setText("");
+                goodsAddReceivePhone.setText("");
+                goodsAddReceiveAddress.setText("");
+                goodsAddReceiveDate.setText("");
+                goodsAddGoodsQuantity.setText("");
+                goodsAddMoney.setText("");
+                goodsAddPrice.setText("");
+                goodsAddNote.setText("");
+            }
+        });
+
+
+        goodsAddBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GoodsLocalDatabase goodsLocalDatabase = new GoodsLocalDatabase(context);
+                goodsInformation.setGoodsCode(goodsAddGoodsID.getText().toString());
+                goodsInformation.setGoodsType(goodsAddType.getText().toString());
+                goodsInformation.setGoodsSendName(goodsAddSenderName.getText().toString());
+                goodsInformation.setGoodsSendPhone(goodsAddSenderPhone.getText().toString());
+                goodsInformation.setGoodsSendCity(goodsAddSenderAddress.getText().toString()); // this one need to clarify, currently it not correct
+                goodsInformation.setGoodsSendDate(goodsAddSenderDate.getText().toString());
+                goodsInformation.setGoodsReceiveName(goodsAddReceiveName.getText().toString());
+                goodsInformation.setGoodsReceivePhone(goodsAddReceivePhone.getText().toString());
+                goodsInformation.setGoodsReceiveCity(goodsAddReceiveAddress.getText().toString()); // this one need to clarify, currently it is not correct
+                goodsInformation.setGoodsReceiveDate(goodsAddReceiveDate.getText().toString());
+                goodsInformation.setGoodsQuantity(goodsAddGoodsQuantity.getText().toString());
+                goodsInformation.setGoodsMoney(goodsAddMoney.getText().toString());
+                //missing price
+                goodsInformation.setGoodsNote(goodsAddNote.getText().toString());
+                goodsLocalDatabase.addGoods(goodsInformation);
+
+                Toast.makeText(context,"Đã Hoàn Thành Thêm mới",Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        goodsAddCloseBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+
+            }
+        });
+
+        goodsAddScanBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.scanBarcode(activity,fragment);
+            }
+        });
+        goodsAddGoodsID.setText(MainActivity.scanIDResult);
+
+        //show keyboard for EditText in popup windows
+        popupWindow.setFocusable(true);
+        popupWindow.update();
+
+    }
+
     public static void makeCall (Context context,String phoneNumber){
         Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumber));
         context.startActivity(intent);
@@ -676,7 +883,6 @@ public class MainActivity extends AppCompatActivity {
 
         }else if(item.getTitle() == "Cập Nhật") {
             goodsUpdateInforPopup(this.getWindow().getDecorView().getRootView(),this,goodsSelectFromListview);
-
 
         }else if(item.getTitle() == "Xóa") {
             GoodsLocalDatabase goodsLocalDatabase = new GoodsLocalDatabase(this);
@@ -723,4 +929,26 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    public static void scanBarcode(Activity activity, Fragment fragment){
+        IntentIntegrator integrator = new IntentIntegrator(activity).forSupportFragment(fragment);
+
+        //IntentIntegrator integrator = new IntentIntegrator(getActivity());
+        // use forSupportFragment or forFragment method to use fragments instead of activity
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.ONE_D_CODE_TYPES);
+        integrator.setPrompt("Scan Mã Hàng");
+        integrator.setBeepEnabled(true);
+        integrator.setOrientationLocked(true);
+        integrator.setCaptureActivity(Capture.class);
+        integrator.initiateScan();
+    }
+
+    public static void spinderGoodsStatus (Context context,Spinner spinner){
+        //parameter for spinner
+        String[] goodsStsSelectList = new String[]{"Chưa Nhận","Đang Ở Văn Phòng","Đang Vận Chuyển","Đang Ở Kho","Đang Giao","Đã Hoàn Thành"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, goodsStsSelectList);
+        spinner.setAdapter(adapter);
+
+    }
+
 }

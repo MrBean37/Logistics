@@ -60,6 +60,7 @@ public class SummaryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.summary_layout, container, false);
         TextView summaryPhoneID = view.findViewById(R.id.summary_phoneID);
         TextView summaryDate = view.findViewById(R.id.summary_date);

@@ -90,6 +90,7 @@ public class GoodsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         final View view = inflater.inflate(R.layout.goods_main_layout, container, false);
         goodsMainListview = view.findViewById(R.id.goods_main_listview);
         goodsMainTabLayout = view.findViewById(R.id.goods_main_tab);
@@ -210,7 +211,7 @@ public class GoodsFragment extends Fragment {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         if (v.getId() == R.id.goods_main_listview) {
 
-            MainActivity.curActiveFragment = 2; //set active fragment
+
             ListView lv = (ListView) v;
             AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) menuInfo;
             //AdapterView.AdapterContextMenuInfo acmi = getActivity().getMenuInflater().inflate(R.menu.frag);

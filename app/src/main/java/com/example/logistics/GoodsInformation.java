@@ -79,6 +79,43 @@ public class GoodsInformation implements Serializable {
         this.goodsReceiveDate = goodsReceiveDate;
         this.goodsReceiveNote = goodsReceiveNote;
     }
+    //this construction to create new object without ID (primary key) to avoid dupplicate ID when add new one
+    public GoodsInformation(String goodsCode, String goodsName, String goodsType, String goodsSts, String goodsQuantity, String goodsUnit,
+                            String goodsWeight, String goodsMoney, String goodsDate, String goodsLocation, String goodsNote, String goodsSendName,
+                            String goodsSendID, String goodsSendPhone, String goodsSendCity, String goodsSendDistrict, String goodsSendProvince,
+                            String goodsSendCalled, String goodsSendDate, String goodsSendNote, String goodsReceiveName, String goodsReceiveID,
+                            String goodsReceivePhone, String goodsReceiveCity, String goodsReceiveDistrict, String goodsReceiveProvince, String goodsReceiveCalled,
+                            String goodsReceiveDate, String goodsReceiveNote) {
+        this.goodsCode = goodsCode;
+        this.goodsName = goodsName;
+        this.goodsType = goodsType;
+        this.goodsSts = goodsSts;
+        this.goodsQuantity = goodsQuantity;
+        this.goodsUnit = goodsUnit;
+        this.goodsWeight = goodsWeight;
+        this.goodsMoney = goodsMoney;
+        this.goodsDate = goodsDate;
+        this.goodsLocation = goodsLocation;
+        this.goodsNote = goodsNote;
+        this.goodsSendName = goodsSendName;
+        this.goodsSendID = goodsSendID;
+        this.goodsSendPhone = goodsSendPhone;
+        this.goodsSendCity = goodsSendCity;
+        this.goodsSendDistrict = goodsSendDistrict;
+        this.goodsSendProvince = goodsSendProvince;
+        this.goodsSendCalled = goodsSendCalled;
+        this.goodsSendDate = goodsSendDate;
+        this.goodsSendNote = goodsSendNote;
+        this.goodsReceiveName = goodsReceiveName;
+        this.goodsReceiveID = goodsReceiveID;
+        this.goodsReceivePhone = goodsReceivePhone;
+        this.goodsReceiveCity = goodsReceiveCity;
+        this.goodsReceiveDistrict = goodsReceiveDistrict;
+        this.goodsReceiveProvince = goodsReceiveProvince;
+        this.goodsReceiveCalled = goodsReceiveCalled;
+        this.goodsReceiveDate = goodsReceiveDate;
+        this.goodsReceiveNote = goodsReceiveNote;
+    }
 
     public int getGoodsID() {
         return goodsID;
