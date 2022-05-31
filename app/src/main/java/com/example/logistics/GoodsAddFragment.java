@@ -185,6 +185,7 @@ public class GoodsAddFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 MainActivity.mainViewPager.setCurrentItem(MainActivity.lastActiveFragment);  // go back to last fragment
+
             }
         });
 

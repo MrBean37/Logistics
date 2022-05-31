@@ -17,6 +17,8 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.text.Layout;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -113,6 +115,12 @@ public class MainActivity extends AppCompatActivity {
                     new String[]{Manifest.permission.CALL_PHONE}, 1);
         }
 
+        if (getApplicationContext().checkSelfPermission(Manifest.permission.READ_PHONE_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission has not been granted, therefore prompt the user to grant permission
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_PHONE_STATE}, 1);
+        }
 
 
         //licenseLocalSaveData("a","b");
@@ -181,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
 
         mainFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                Toast.makeText(getApplication(),getDevicePhoneNumber(),Toast.LENGTH_LONG).show();
                 if(summaryFab.getVisibility()==View.GONE){
                     summaryFab.setVisibility(View.VISIBLE);
                 }else {
@@ -949,6 +958,24 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, goodsStsSelectList);
         spinner.setAdapter(adapter);
 
+    }
+
+    public String getDeviceIMEI() {
+        String deviceUniqueIdentifier = null;
+        TelephonyManager tm = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
+        if (null != tm) {
+            deviceUniqueIdentifier = tm.getDeviceId();
+        }
+        if (null == deviceUniqueIdentifier || 0 == deviceUniqueIdentifier.length()) {
+            deviceUniqueIdentifier = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        }
+        return deviceUniqueIdentifier;
+    }
+
+    public String getDevicePhoneNumber() {
+        TelephonyManager tMgr = (TelephonyManager)getApplication().getSystemService(Context.TELEPHONY_SERVICE);
+        String mPhoneNumber = tMgr.getLine1Number();
+        return mPhoneNumber;
     }
 
 }

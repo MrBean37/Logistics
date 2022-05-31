@@ -199,7 +199,6 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
         db.close();
     }
 
-
     public GoodsInformation getGoodsBaseID ( int id)  // search full match
     {
         Log.i(TAG, "MyDatabaseHelper.getNote ... " + id);
@@ -258,8 +257,6 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
     }
 
     // get customer information base on mobile phone number
-
-
     public List<GoodsInformation> getGoodsBaseReceivePhone ( String receivePhone)  // search contain
     {
         Log.i(TAG, "MyDatabaseHelper.getNote ... " +receivePhone);
@@ -321,7 +318,6 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
         // return note list
         return goodsList;
     }
-
 
     public List<GoodsInformation> getGoodsBaseSendPhone ( String sendPhone)   // search conatain
     {
@@ -385,7 +381,6 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
         return goodsList;
     }
 
-
     public List<GoodsInformation> getGoodsBaseCode ( String code)   // search full match
     {
         Log.i(TAG, "MyDatabaseHelper.getNote ... " +code);
@@ -447,7 +442,6 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
         // return note list
         return goodsList;
     }
-
 
     public List<GoodsInformation> getGoodsBaseSendName ( String sendName)   // search contain
     {
@@ -511,7 +505,6 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
         return goodsList;
     }
 
-
     public List<GoodsInformation> getGoodsBaseReceiveName ( String receiveName)  // search contain
     {
         Log.i(TAG, "MyDatabaseHelper.getNote ... " +receiveName);
@@ -573,7 +566,6 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
         // return note list
         return goodsList;
     }
-
 
     public List<GoodsInformation> getGoodsBaseSts ( String sts)  // search full match
     {
@@ -700,12 +692,6 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
         return goodsList;
     }
 
-
-
-
-
-
-
     public List<GoodsInformation> getAllGoods () {
         Log.i(TAG, "MyDatabaseHelper.getAllNotes ... ");
 
@@ -763,7 +749,6 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
         return goodsList;
     }
 
-
     public int getGoodsCount () {
         Log.i(TAG, "MyDatabaseHelper.getNotesCount ... ");
 
@@ -778,7 +763,6 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
         // return count
         return count1;
     }
-
 
     public int updateGoods (GoodsInformation goods){
         Log.i(TAG, "MyDatabaseHelper.updateNote ... ");
@@ -835,5 +819,11 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void deleteAllData(){
+        Log.i(TAG, "MyDatabaseHelper.updateNote ... ");
 
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from "+ TABLE_NOTE);
+        db.close();
+    }
 }
