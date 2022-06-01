@@ -16,6 +16,8 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
@@ -39,6 +41,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.api.services.sheets.v4.model.ClearValuesResponse;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -74,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
     //database
     static public final String GOOGLE_SHEET_SPREADSHEET_ID = "1f5VBaiZVyq5D9c1Nb0SO2nElNzvUQGdCP1VlerWSoM4";
-
+    static public List<List<Object>> dataAll;
 
     // googlesheet upload and download status
     static public int googleSheetDownloadSts=0;
@@ -120,6 +123,13 @@ public class MainActivity extends AppCompatActivity {
             // Permission has not been granted, therefore prompt the user to grant permission
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.READ_PHONE_STATE}, 1);
+        }
+
+        if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_WIFI_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission has not been granted, therefore prompt the user to grant permission
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_WIFI_STATE}, 1);
         }
 
 
@@ -189,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
 
         mainFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Toast.makeText(getApplication(),getDevicePhoneNumber(),Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplication(),getDeviceMacNumber(),Toast.LENGTH_LONG).show();
                 if(summaryFab.getVisibility()==View.GONE){
                     summaryFab.setVisibility(View.VISIBLE);
                 }else {
@@ -316,6 +326,67 @@ public class MainActivity extends AppCompatActivity {
                 goodsAddFab.setVisibility(View.GONE);
             }
         });
+
+        uploadFab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                summaryFab.setVisibility(View.GONE);
+                goodsFab.setVisibility(View.GONE);
+                scanFab.setVisibility(View.GONE);
+                searchFab.setVisibility(View.GONE);
+                uploadFab.setVisibility(View.GONE);
+                downloadFab.setVisibility(View.GONE);
+                goodsAddFab.setVisibility(View.GONE);
+
+                final ClearValuesResponse[] response = new ClearValuesResponse[1];
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        response[0] =    googleSheetInterface.deleteAllData(GOOGLE_SHEET_SPREADSHEET_ID,"test","A1:B",getApplicationContext());
+                    }
+                };
+                Thread t = new Thread(runnable);
+                t.start();
+                try {
+                    t.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (response[0] != null){
+
+                    Toast.makeText(getApplicationContext(), response[0].toString(), Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+        downloadFab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                summaryFab.setVisibility(View.GONE);
+                goodsFab.setVisibility(View.GONE);
+                scanFab.setVisibility(View.GONE);
+                searchFab.setVisibility(View.GONE);
+                uploadFab.setVisibility(View.GONE);
+                downloadFab.setVisibility(View.GONE);
+                goodsAddFab.setVisibility(View.GONE);
+
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        dataAll = googleSheetInterface.getData(GOOGLE_SHEET_SPREADSHEET_ID,"test","A1:B");
+                    }
+                };
+                Thread t = new Thread(runnable);
+                t.start();
+                try {
+                    t.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                Toast.makeText(getApplicationContext(), dataAll.get(0).get(0).toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
 
     }
@@ -964,6 +1035,7 @@ public class MainActivity extends AppCompatActivity {
         String deviceUniqueIdentifier = null;
         TelephonyManager tm = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
         if (null != tm) {
+           // deviceUniqueIdentifier = tm.getImei();
             deviceUniqueIdentifier = tm.getDeviceId();
         }
         if (null == deviceUniqueIdentifier || 0 == deviceUniqueIdentifier.length()) {
@@ -976,6 +1048,13 @@ public class MainActivity extends AppCompatActivity {
         TelephonyManager tMgr = (TelephonyManager)getApplication().getSystemService(Context.TELEPHONY_SERVICE);
         String mPhoneNumber = tMgr.getLine1Number();
         return mPhoneNumber;
+    }
+
+    public String getDeviceMacNumber() {
+        WifiManager manager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        WifiInfo info = manager.getConnectionInfo();
+        String address = info.getMacAddress();
+        return address;
     }
 
 }

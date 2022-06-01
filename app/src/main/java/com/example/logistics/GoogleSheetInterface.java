@@ -1,7 +1,9 @@
 package com.example.logistics;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
@@ -10,6 +12,8 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
+import com.google.api.services.sheets.v4.model.ClearValuesRequest;
+import com.google.api.services.sheets.v4.model.ClearValuesResponse;
 import com.google.api.services.sheets.v4.model.UpdateValuesResponse;
 import com.google.api.services.sheets.v4.model.ValueRange;
 
@@ -132,5 +136,36 @@ int totalRows = 0;
     return totalRows;
 }
 
+public ClearValuesResponse deleteAllData (String SPREADSHEET_ID, String sheetName, String cellName, Context context){
+    ClearValuesResponse response = null;
+
+    String range = sheetName+"!"+cellName;
+    List<List<Object>> data = new ArrayList<>();
+    GoogleCredential cred = null;
+    // InputStream stream = getResources().openRawResource(
+    //       getResources().getIdentifier("secret",
+    //             "raw", getPackageName()));
+    InputStream stream = GoogleSheetInterface.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+    try {
+        cred = GoogleCredential.fromStream(stream)
+                .createScoped(Collections.singleton(SheetsScopes.SPREADSHEETS));
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+    sheetsService = new Sheets.Builder(transport, factory, cred)
+            .setApplicationName("GoogleSheetHelper")
+            .build();
+
+    ClearValuesRequest requestBody = new ClearValuesRequest();
+    try {
+        Sheets.Spreadsheets.Values.Clear request = sheetsService.spreadsheets().values().clear(SPREADSHEET_ID,range,requestBody);
+         response = request.execute();
+
+    } catch (IOException e) {
+        e.printStackTrace();
+        MainActivity.googleSheetUploadoadSts =0;
+    }
+    return response;
+}
 
 };
