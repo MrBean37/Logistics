@@ -26,11 +26,6 @@ import java.util.List;
 public class GoogleSheetInterface extends Activity {
 
 
-    //private final String SPREADSHEET_ID = "1ug48SPLf7hiCo7WcavACkYxvhwkhJal5IWY8X33RU48";
-  //  private final String SPREADSHEET_ID = MainActivity.GOOGLE_SHEET_SPREADSHEET_ID;
-
-
-
     Sheets sheetsService;
     HttpTransport transport = AndroidHttp.newCompatibleTransport();
     JsonFactory factory = JacksonFactory.getDefaultInstance();
@@ -39,7 +34,7 @@ public class GoogleSheetInterface extends Activity {
 
 
 
-    public List<List<Object>> getData(String SPREADSHEET_ID,String sheetName, String cellName){
+    public List<List<Object>> getData(String SPREADSHEET_ID,String sheetName, String cellName,Boolean status){
         String range = sheetName+"!"+cellName;
         List<List<Object>> data = new ArrayList<>();
         GoogleCredential cred = null;
@@ -52,6 +47,7 @@ public class GoogleSheetInterface extends Activity {
                             .createScoped(Collections.singleton(SheetsScopes.SPREADSHEETS));
                 } catch (IOException e) {
                     e.printStackTrace();
+                    status =false;
                 }
                 sheetsService = new Sheets.Builder(transport, factory, cred)
                         .setApplicationName("GoogleSheetHelper")
@@ -61,111 +57,124 @@ public class GoogleSheetInterface extends Activity {
                             .get(SPREADSHEET_ID, range)
                             .execute();
                       data = result.getValues();
-                      MainActivity.googleSheetDownloadSts =1; //update status
+                      status = true;
+                      //MainActivity.googleSheetDownloadSts =1; //update status
 
                 } catch (IOException e) {
                     Log.e("GSHelper", e.getLocalizedMessage());
-                    MainActivity.googleSheetDownloadSts =0;
+                    status = false;
+                   // MainActivity.googleSheetDownloadSts =0;
                 }
-return data;
+        return data;
     }
 
 
-public void updateRangeData(String SPREADSHEET_ID,String sheetName, String cellName, List<List<Object>> listData){
-    String range = sheetName+"!"+cellName;
-    List<List<Object>> data = new ArrayList<>();
-    GoogleCredential cred = null;
-    // InputStream stream = getResources().openRawResource(
-    //       getResources().getIdentifier("secret",
-    //             "raw", getPackageName()));
-    InputStream stream = GoogleSheetInterface.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
-    try {
-        cred = GoogleCredential.fromStream(stream)
-                .createScoped(Collections.singleton(SheetsScopes.SPREADSHEETS));
-    } catch (IOException e) {
-        e.printStackTrace();
+    public void updateRangeData(String SPREADSHEET_ID,String sheetName, String cellName, List<List<Object>> listData, Boolean status){
+        UpdateValuesResponse response = null;
+        String range = sheetName+"!"+cellName;
+        List<List<Object>> data = new ArrayList<>();
+        GoogleCredential cred = null;
+        // InputStream stream = getResources().openRawResource(
+        //       getResources().getIdentifier("secret",
+        //             "raw", getPackageName()));
+        InputStream stream = GoogleSheetInterface.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+        try {
+            cred = GoogleCredential.fromStream(stream)
+                    .createScoped(Collections.singleton(SheetsScopes.SPREADSHEETS));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        sheetsService = new Sheets.Builder(transport, factory, cred)
+                .setApplicationName("GoogleSheetHelper")
+                .build();
+
+                ValueRange valueRange = new ValueRange();
+                valueRange.setMajorDimension("ROWS");
+                valueRange.setRange(range);
+                //valueRange.setValues(values1);
+                valueRange.setValues(listData);
+                try {
+                    response = sheetsService.spreadsheets().values()
+                            .update
+                                    (SPREADSHEET_ID,
+                                            range, valueRange).setValueInputOption("USER_ENTERED")
+                            .execute();
+                   // MainActivity.googleSheetUploadoadSts=1; //update status
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    status = false;
+                }
+                if (response == null) {
+                    status = false;
+                }else {
+                    status = true;
+                }
     }
-    sheetsService = new Sheets.Builder(transport, factory, cred)
-            .setApplicationName("GoogleSheetHelper")
-            .build();
 
-            ValueRange valueRange = new ValueRange();
-            valueRange.setMajorDimension("ROWS");
-            valueRange.setRange(range);
-            //valueRange.setValues(values1);
-            valueRange.setValues(listData);
-            try {
-                UpdateValuesResponse response = sheetsService.spreadsheets().values()
-                        .update
-                                (SPREADSHEET_ID,
-                                        range, valueRange).setValueInputOption("USER_ENTERED")
-                        .execute();
-                MainActivity.googleSheetUploadoadSts=1; //update status
-            } catch (IOException e) {
-                e.printStackTrace();
-                MainActivity.googleSheetUploadoadSts =0;
-            }
-}
+    public int getTotalRows(String SPREADSHEET_ID,String sheetName){
+        String range = sheetName+"!A1:B";
+    int totalRows = 0;
+        GoogleCredential cred = null;
+        // InputStream stream = getResources().openRawResource(
+        //       getResources().getIdentifier("secret",
+        //             "raw", getPackageName()));
+        InputStream stream = GoogleSheetInterface.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+        try {
+            cred = GoogleCredential.fromStream(stream)
+                    .createScoped(Collections.singleton(SheetsScopes.SPREADSHEETS));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        sheetsService = new Sheets.Builder(transport, factory, cred)
+                .setApplicationName("GoogleSheetHelper")
+                .build();
+        try {
+            ValueRange result = sheetsService.spreadsheets().values()
+                    .get(SPREADSHEET_ID, range)
+                    .execute();
+            totalRows = result.getValues().size();
 
-public int getTotalRows(String SPREADSHEET_ID,String sheetName){
-    String range = sheetName+"!A1:B";
-int totalRows = 0;
-    GoogleCredential cred = null;
-    // InputStream stream = getResources().openRawResource(
-    //       getResources().getIdentifier("secret",
-    //             "raw", getPackageName()));
-    InputStream stream = GoogleSheetInterface.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
-    try {
-        cred = GoogleCredential.fromStream(stream)
-                .createScoped(Collections.singleton(SheetsScopes.SPREADSHEETS));
-    } catch (IOException e) {
-        e.printStackTrace();
+        } catch (IOException e) {
+            Log.e("GSHelper", e.getLocalizedMessage());
+        }
+        return totalRows;
     }
-    sheetsService = new Sheets.Builder(transport, factory, cred)
-            .setApplicationName("GoogleSheetHelper")
-            .build();
-    try {
-        ValueRange result = sheetsService.spreadsheets().values()
-                .get(SPREADSHEET_ID, range)
-                .execute();
-        totalRows = result.getValues().size();
 
-    } catch (IOException e) {
-        Log.e("GSHelper", e.getLocalizedMessage());
+    public void deleteAllData (String SPREADSHEET_ID, String sheetName, String cellName, Boolean status){
+        ClearValuesResponse response = null;
+
+        String range = sheetName+"!"+cellName;
+        //List<List<Object>> data = new ArrayList<>();
+        GoogleCredential cred = null;
+        // InputStream stream = getResources().openRawResource(
+        //       getResources().getIdentifier("secret",
+        //             "raw", getPackageName()));
+        InputStream stream = GoogleSheetInterface.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+        try {
+            cred = GoogleCredential.fromStream(stream)
+                    .createScoped(Collections.singleton(SheetsScopes.SPREADSHEETS));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        sheetsService = new Sheets.Builder(transport, factory, cred)
+                .setApplicationName("GoogleSheetHelper")
+                .build();
+
+        ClearValuesRequest requestBody = new ClearValuesRequest();
+        try {
+            Sheets.Spreadsheets.Values.Clear request = sheetsService.spreadsheets().values().clear(SPREADSHEET_ID,range,requestBody);
+             response = request.execute();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            status = false;
+        }
+        if (response == null) {
+            status = false;
+        }else {
+            status = true;
+        }
+
     }
-    return totalRows;
-}
-
-public ClearValuesResponse deleteAllData (String SPREADSHEET_ID, String sheetName, String cellName, Context context){
-    ClearValuesResponse response = null;
-
-    String range = sheetName+"!"+cellName;
-    List<List<Object>> data = new ArrayList<>();
-    GoogleCredential cred = null;
-    // InputStream stream = getResources().openRawResource(
-    //       getResources().getIdentifier("secret",
-    //             "raw", getPackageName()));
-    InputStream stream = GoogleSheetInterface.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
-    try {
-        cred = GoogleCredential.fromStream(stream)
-                .createScoped(Collections.singleton(SheetsScopes.SPREADSHEETS));
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-    sheetsService = new Sheets.Builder(transport, factory, cred)
-            .setApplicationName("GoogleSheetHelper")
-            .build();
-
-    ClearValuesRequest requestBody = new ClearValuesRequest();
-    try {
-        Sheets.Spreadsheets.Values.Clear request = sheetsService.spreadsheets().values().clear(SPREADSHEET_ID,range,requestBody);
-         response = request.execute();
-
-    } catch (IOException e) {
-        e.printStackTrace();
-        MainActivity.googleSheetUploadoadSts =0;
-    }
-    return response;
-}
 
 };

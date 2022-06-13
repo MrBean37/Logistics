@@ -1,5 +1,6 @@
 package com.example.logistics;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -17,6 +18,8 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+
+import java.util.Calendar;
 
 
 /**
@@ -128,6 +131,15 @@ public class GoodsAddFragment extends Fragment {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 goodsSts = "100";
+            }
+        });
+
+        goodsAddSenderDate.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+              MainActivity.dateTimeSelect(getActivity(),goodsAddSenderDate,MainActivity.dateFormat,MainActivity.hours24HView);
             }
         });
 

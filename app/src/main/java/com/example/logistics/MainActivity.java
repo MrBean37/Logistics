@@ -1,5 +1,7 @@
 package com.example.logistics;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -9,6 +11,8 @@ import androidx.viewpager.widget.ViewPager;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -32,12 +36,14 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -45,11 +51,16 @@ import com.google.api.services.sheets.v4.model.ClearValuesResponse;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.text.DateFormat;
+import java.text.FieldPosition;
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -57,27 +68,74 @@ public class MainActivity extends AppCompatActivity {
     static public String LICENSE_SERVER_PATH = "1k60AtjPiqYzlFJMjlpqxikVLBwoHopn3DOR7jjIZAjg";
     static public String LICENSE_SHEET_RANGE = "A2:D";
     static public String LICENSE_SHEET_NAME = "License";
-    static public int LICENSE_CUS_ID = 0;
-    static public int LICENSE_CUS_NAME = 1;
-    static public int LICENSE_CUS_EXPIRE_DATE = 2;
-    static public int LICENSE_CUS_NOTE = 3;
-    static public String customerLicenseID = "37VM0001LG";
-    static public String licenseExpireDate="";
+    static public int LICENSE_MACADDRESS_MAP = 0;
+    static public int LICENSE_CUS_NAME_MAP = 1;
+    static public int LICENSE_CUS_PHONE_MAP = 2;
+    static public int LICENSE_CUS_START_DATE_MAP = 3;
+    static public int LICENSE_CUS_EXPIRE_DATE_MAP = 4;
+    static public int LICENSE_CUS_NOTE_MAP = 5;
+
+    static public String phoneMacAddress ="";
+    static public String licenseCusName ="";
+    static public String licenseCusPhone ="";
+    static public String licenseStartDate = "";
+    static public String licenseExpDate ="";
+    static public String licenseNote ="";
     static public int licenseRemainDays;
     static public List<List<Object>> licenseInfor;
     static public int licenseSheetDownloadSts=0;
     //static public int licenseSheetUploadoadSts=0;
 
     static public final String LICENSE_SHARED_PREFS_NAME ="license";
-    static public final String LICENSE_SHARED_PREFS_ID ="licenseID";
-    static public final String LICENSE_SHARED_PREFS_EXP ="licenseExpireDate";
+    static public final String LICENSE_SHARED_PREFS_MACADD ="licenseMacAdress";
+    static public final String LICENSE_SHARED_PREFS_CUS_NAME ="licenseCusName";
+    static public final String LICENSE_SHARED_PREFS_CUS_PHONE ="licenseCusPhone";
+    static public final String LICENSE_SHARED_PREFS_START_DATE ="licenseStartDate";
+    static public final String LICENSE_SHARED_PREFS_EXP_DATE ="licenseExpDate";
+    static public final String LICENSE_SHARED_PREFS_NOTE ="licenseNote";
 
 
 
 
     //database
-    static public final String GOOGLE_SHEET_SPREADSHEET_ID = "1f5VBaiZVyq5D9c1Nb0SO2nElNzvUQGdCP1VlerWSoM4";
+    static public final String DATABASE_SPREADSHEET_ID = "1f5VBaiZVyq5D9c1Nb0SO2nElNzvUQGdCP1VlerWSoM4";
+    static public String DATABASE_SHEET_RANGE = "A2:D";
+    static public String DATABASE_SHEET_NAME = "License";
     static public List<List<Object>> dataAll;
+    //database mapping
+    static public int GOODS_ID_MAP=0;
+    static public int GOODS_CODE_MAP=1;
+    static public int GOODS_NAME_MAP=2;
+    static public int GOODS_TYPE_MAP=3;
+    static public int GOODS_STS_MAP=4;
+    static public int GOODS_QUANTITY_MAP=5;
+    static public int GOODS_UNIT_MAP=6;
+    static public int GOODS_WEIGHT_MAP=7;
+    static public int GOODS_MONEY_MAP=8;
+    static public int GOODS_DATE_MAP=9;
+    static public int GOODS_LOCATION_MAP=10;
+    static public int GOODS_NOTE_MAP=11;
+
+    static public int GOODS_SENDNAME_MAP=12;
+    static public int GOODS_SENDID_MAP=13;
+    static public int GOODS_SENDPHONE_MAP=14;
+    static public int GOODS_SENDCITY_MAP=15;
+    static public int GOODS_SENDDISTRICT_MAP=16;
+    static public int GOODS_SENDPROVINCE_MAP=17;
+    static public int GOODS_SENDCALLED_MAP=18;
+    static public int GOODS_SENDDATE_MAP=19;
+    static public int GOODS_SENDNOTE_MAP=20;
+
+    static public int GOODS_RECEIVENAME_MAP=21;
+    static public int GOODS_RECEIVEID_MAP=22;
+    static public int GOODS_RECEIVEPHONE_MAP=23;
+    static public int GOODS_RECEIVECITY_MAP=24;
+    static public int GOODS_RECEIVEDISTRICT_MAP=25;
+    static public int GOODS_RECEIVEPROVINCE_MAP=26;
+    static public int GOODS_RECEIVECALLED_MAP=27;
+    static public int GOODS_RECEIVEDATE_MAP=28;
+    static public int GOODS_RECEIVENOTE_MAP=29;
+
 
     // googlesheet upload and download status
     static public int googleSheetDownloadSts=0;
@@ -106,6 +164,13 @@ public class MainActivity extends AppCompatActivity {
 
     //Scan Result
     static public String scanIDResult ="";
+
+    //General Setting
+   // public static String dateFormat ="dd/MM/yyyy";  // date only
+
+    public static String dateFormat ="dd/MM/yyyy HH:mm:ss";  // date and time
+    public static boolean hours24HView =true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -341,7 +406,7 @@ public class MainActivity extends AppCompatActivity {
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-                        response[0] =    googleSheetInterface.deleteAllData(GOOGLE_SHEET_SPREADSHEET_ID,"test","A1:B",getApplicationContext());
+                        response[0] =    googleSheetInterface.deleteAllData(MainActivity.DATABASE_SPREADSHEET_ID,MainActivity.DATABASE_SHEET_NAME,MainActivity.DATABASE_SHEET_RANGE,getApplicationContext());
                     }
                 };
                 Thread t = new Thread(runnable);
@@ -372,7 +437,7 @@ public class MainActivity extends AppCompatActivity {
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-                        dataAll = googleSheetInterface.getData(GOOGLE_SHEET_SPREADSHEET_ID,"test","A1:B");
+                        dataAll = googleSheetInterface.getData(MainActivity.DATABASE_SPREADSHEET_ID,MainActivity.DATABASE_SHEET_NAME,MainActivity.DATABASE_SHEET_RANGE);
                     }
                 };
                 Thread t = new Thread(runnable);
@@ -391,23 +456,78 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void licenseLocalSaveData(String id, String expDate){
-        SharedPreferences sharedPreferences =getSharedPreferences(LICENSE_SHARED_PREFS_NAME,MODE_PRIVATE);
+    public static void licenseLocalSaveData(String macAddress, String cusName,String cusPhone, String startDate,String expDate,String note){
+        SharedPreferences sharedPreferences =getSharedPreferences(MainActivity.LICENSE_SHARED_PREFS_NAME,MODE_PRIVATE);
         SharedPreferences.Editor editor =sharedPreferences.edit();
-        editor.putString(LICENSE_SHARED_PREFS_ID,id);
-        editor.putString(LICENSE_SHARED_PREFS_EXP,expDate);
+        editor.putString(LICENSE_SHARED_PREFS_MACADD,macAddress);
+        editor.putString(LICENSE_SHARED_PREFS_CUS_NAME,cusName);
+        editor.putString(LICENSE_SHARED_PREFS_CUS_PHONE,cusPhone);
+        editor.putString(LICENSE_SHARED_PREFS_START_DATE,startDate);
+        editor.putString(LICENSE_SHARED_PREFS_EXP_DATE,expDate);
+        editor.putString(LICENSE_SHARED_PREFS_NOTE,note);
         editor.apply();
 
     }
 
-    public void licenseLocalRetriveData(String id, String expDate){
+    public void licenseLocalRetriveData(String macAddress, String cusName, String cusPhone, String startDate, String expDate, String note){
         SharedPreferences sharedPreferences =getSharedPreferences(LICENSE_SHARED_PREFS_NAME,MODE_PRIVATE);
-        id=sharedPreferences.getString(LICENSE_SHARED_PREFS_ID,"");
-        expDate = sharedPreferences.getString(LICENSE_SHARED_PREFS_EXP,"");
+        macAddress=sharedPreferences.getString(LICENSE_SHARED_PREFS_MACADD,"");
+        cusName=sharedPreferences.getString(LICENSE_SHARED_PREFS_CUS_NAME,"");
+        cusPhone=sharedPreferences.getString(LICENSE_SHARED_PREFS_CUS_PHONE,"");
+        startDate=sharedPreferences.getString(LICENSE_SHARED_PREFS_START_DATE,"");
+        expDate=sharedPreferences.getString(LICENSE_SHARED_PREFS_EXP_DATE,"");
+        note=sharedPreferences.getString(LICENSE_SHARED_PREFS_NOTE,"");
+    }
+
+    public static void licenseCheck(String licenseSheetID, String licenseSheetName,String licenseCells,String macAddress,String cusName,String cusPhone, String startDate, String expDate,
+                                    String note,int remaindDays) throws ParseException {
+        GoogleSheetInterface googleSheetInterface = new GoogleSheetInterface();
+        Boolean status = false;
+        MainActivity.phoneMacAddress = getDeviceMacNumber();
+        cusName ="NA";
+        cusPhone = "NA";
+        startDate = "NA";
+        expDate = "NA";
+        note = "NA";
+        remaindDays = -1;
+
+        List<List<Object>> licenseDatabase = googleSheetInterface.getData(licenseSheetID,licenseSheetName,licenseCells,status);
+
+        // if able to read data from server to get license information -> variable status = true
+        if(status) {
+            for (int i = 0; i < licenseDatabase.size(); i++) {
+                if (licenseDatabase.get(i).get(MainActivity.LICENSE_MACADDRESS_MAP).toString().matches(MainActivity.phoneMacAddress)) {
+
+                    expDate = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_EXPIRE_DATE_MAP).toString();
+                    cusName = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_NAME_MAP).toString();
+                    cusPhone = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_PHONE_MAP).toString();
+                    cusPhone = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_PHONE_MAP).toString();
+                    startDate = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_START_DATE_MAP).toString();
+                    note = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_NOTE_MAP).toString();
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                    Date exp = sdf.parse(expDate);
+                    String currentDateString = sdf.format(new Date());
+                    Date currentDate = sdf.parse(currentDateString);
+                    long diff = exp.getTime() - currentDate.getTime();
+                    remaindDays = (int) (diff / (1000 * 60 * 60 * 24));
+                }
+            }
+        } else {  // if can not read data from server then get from local
+            SharedPreferences sharedPreferences =getSharedPreferences(LICENSE_SHARED_PREFS_NAME,MODE_PRIVATE);
+            macAddress=sharedPreferences.getString(LICENSE_SHARED_PREFS_MACADD,"");
+            cusName=sharedPreferences.getString(LICENSE_SHARED_PREFS_CUS_NAME,"");
+            cusPhone=sharedPreferences.getString(LICENSE_SHARED_PREFS_CUS_PHONE,"");
+            startDate=sharedPreferences.getString(LICENSE_SHARED_PREFS_START_DATE,"");
+            expDate=sharedPreferences.getString(LICENSE_SHARED_PREFS_EXP_DATE,"");
+            note=sharedPreferences.getString(LICENSE_SHARED_PREFS_NOTE,"");
+
+        }
+
 
     }
 
-    public void licenseCheck() throws ParseException {
+    public void licenseCheck01() throws ParseException {
 
         if(MainActivity.licenseSheetDownloadSts ==1) {
             for (int i = 0; i < MainActivity.licenseInfor.size(); i++) {
@@ -1031,7 +1151,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public String getDeviceIMEI() {
+    public static String getDeviceIMEI() {
         String deviceUniqueIdentifier = null;
         TelephonyManager tm = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
         if (null != tm) {
@@ -1044,17 +1164,176 @@ public class MainActivity extends AppCompatActivity {
         return deviceUniqueIdentifier;
     }
 
-    public String getDevicePhoneNumber() {
+    public static String getDevicePhoneNumber() {
         TelephonyManager tMgr = (TelephonyManager)getApplication().getSystemService(Context.TELEPHONY_SERVICE);
         String mPhoneNumber = tMgr.getLine1Number();
         return mPhoneNumber;
     }
 
-    public String getDeviceMacNumber() {
+    public static String getDeviceMacNumber() {
         WifiManager manager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = manager.getConnectionInfo();
         String address = info.getMacAddress();
         return address;
     }
 
+    public static void dateSelect(Context context, final EditText editText, final String dateFormat){
+
+        //Set date listenning :
+        final Calendar myCalendar = Calendar.getInstance();
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                // TODO Auto-generated method stub
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                // set format of date before set to edit text
+                SimpleDateFormat sdf = new SimpleDateFormat(dateFormat, Locale.US);
+
+                editText.setText(sdf.format(myCalendar.getTime()));
+
+
+            }
+
+        };
+
+        //date selected popup windows
+        new DatePickerDialog(context, date, myCalendar
+                .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+
+
+
+
+    }
+
+    public static void dateTimeSelect(final Context context, final EditText editText, final String dateFormat, final Boolean hoursView24H){
+
+
+        //Set date listenning :
+        final Calendar myCalendar = Calendar.getInstance();
+
+
+        // after selected date the time will be selected -> popup for time dialog will show after finished date set
+        final TimePickerDialog.OnTimeSetListener time = new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
+                myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                myCalendar.set(Calendar.MINUTE, minute);
+
+                // set format of date before set to edit text
+                DateFormat sdf = new SimpleDateFormat(dateFormat);
+                editText.setText(sdf.format(myCalendar.getTime()));
+
+            }
+        };
+
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                // TODO Auto-generated method stub
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                new TimePickerDialog(context,time,Calendar.HOUR_OF_DAY,Calendar.MINUTE,hoursView24H).show();
+            }
+
+        };
+        //date selected date popup windows
+        new DatePickerDialog(context, date, myCalendar
+                .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+
+
+    }
+
+    public static void timeSelect(final Context context, final EditText editText, final String dateFormat, final Boolean hoursView24H){
+
+
+        //Set date listenning :
+        final Calendar myCalendar = Calendar.getInstance();
+
+
+        // after selected date the time will be selected -> popup for time dialog will show after finished date set
+        final TimePickerDialog.OnTimeSetListener time = new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
+                myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                myCalendar.set(Calendar.MINUTE, minute);
+
+                // set format of date before set to edit text
+                DateFormat sdf = new SimpleDateFormat(dateFormat);
+                editText.setText(sdf.format(myCalendar.getTime()));
+
+            }
+        };
+        //date selected date popup windows
+        new TimePickerDialog(context,time,Calendar.HOUR_OF_DAY,Calendar.MINUTE,hoursView24H).show();
+
+    }
+
+    public static void downloadData(Context context,List<List<Object>> listObj){
+        if(listObj.size() <1){
+            Toast.makeText(context,"Không Có Dữ Liệu để tải về",Toast.LENGTH_SHORT).show();
+        }else {
+            GoodsLocalDatabase goodsLocalDatabase = new GoodsLocalDatabase(context);
+            goodsLocalDatabase.deleteAllData();
+            if(goodsLocalDatabase.getGoodsCount()>0){
+                Toast.makeText(context,"Quá Trình Cập Nhật Bị Lỗi, Hãy Thử Lại",Toast.LENGTH_SHORT).show();
+            }else {
+                for (int i =0;i<listObj.size();i++){
+                    goodsLocalDatabase.addGoods(MainActivity.convert2LocalObj(listObj.get(i)));
+                }
+            }
+
+        }
+    }
+
+    public static GoodsInformation convert2LocalObj(List<Object> object){
+
+        String goodsCode = object.get(MainActivity.GOODS_CODE_MAP).toString();
+        String goodsName = object.get(MainActivity.GOODS_NAME_MAP).toString();
+        String goodsType = object.get(MainActivity.GOODS_TYPE_MAP).toString();
+        String goodsSts = object.get(MainActivity.GOODS_STS_MAP).toString();
+        String goodsQuantity = object.get(MainActivity.GOODS_QUANTITY_MAP).toString();
+        String goodsUnit = object.get(MainActivity.GOODS_UNIT_MAP).toString();
+        String goodsWeight = object.get(MainActivity.GOODS_WEIGHT_MAP).toString();
+        String goodsMoney = object.get(MainActivity.GOODS_MONEY_MAP).toString();
+        String goodsDate = object.get(MainActivity.GOODS_DATE_MAP).toString();
+        String goodsLocation = object.get(MainActivity.GOODS_LOCATION_MAP).toString();
+        String goodsNote = object.get(MainActivity.GOODS_NOTE_MAP).toString();
+
+        String goodsSendName = object.get(MainActivity.GOODS_SENDNAME_MAP).toString();
+        String goodsSendID = object.get(MainActivity.GOODS_SENDID_MAP).toString();
+        String goodsSendPhone = object.get(MainActivity.GOODS_SENDPHONE_MAP).toString();
+        String goodsSendCity = object.get(MainActivity.GOODS_SENDCITY_MAP).toString();
+        String goodsSendDistrict = object.get(MainActivity.GOODS_SENDDISTRICT_MAP).toString();
+        String goodsSendProvince = object.get(MainActivity.GOODS_SENDPROVINCE_MAP).toString();
+        String goodsSendCalled = object.get(MainActivity.GOODS_SENDCALLED_MAP).toString();
+        String goodsSendDate = object.get(MainActivity.GOODS_SENDDATE_MAP).toString();
+        String goodsSendNote = object.get(MainActivity.GOODS_SENDNOTE_MAP).toString();
+
+        String goodsReceiveName = object.get(MainActivity.GOODS_RECEIVENAME_MAP).toString();
+        String goodsReceiveID = object.get(MainActivity.GOODS_RECEIVEID_MAP).toString();
+        String goodsReceivePhone = object.get(MainActivity.GOODS_RECEIVEPHONE_MAP).toString();
+        String goodsReceiveCity = object.get(MainActivity.GOODS_RECEIVECITY_MAP).toString();
+        String goodsReceiveDistrict = object.get(MainActivity.GOODS_RECEIVEDISTRICT_MAP).toString();
+        String goodsReceiveProvince = object.get(MainActivity.GOODS_RECEIVEPROVINCE_MAP).toString();
+        String goodsReceiveCalled = object.get(MainActivity.GOODS_RECEIVECALLED_MAP).toString();
+        String goodsReceiveDate = object.get(MainActivity.GOODS_RECEIVEDATE_MAP).toString();
+        String goodsReceiveNote = object.get(MainActivity.GOODS_RECEIVENOTE_MAP).toString();
+
+        GoodsInformation goodsInformation = new GoodsInformation(goodsCode, goodsName, goodsType, goodsSts, goodsQuantity, goodsUnit,
+                goodsWeight, goodsMoney, goodsDate, goodsLocation, goodsNote, goodsSendName,
+                goodsSendID, goodsSendPhone, goodsSendCity, goodsSendDistrict, goodsSendProvince,
+                goodsSendCalled, goodsSendDate, goodsSendNote, goodsReceiveName, goodsReceiveID,
+                goodsReceivePhone, goodsReceiveCity, goodsReceiveDistrict, goodsReceiveProvince, goodsReceiveCalled,
+                goodsReceiveDate, goodsReceiveNote);
+        return goodsInformation;
+    }
 }
