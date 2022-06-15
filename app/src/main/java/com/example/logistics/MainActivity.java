@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
     //license
     static public String LICENSE_SERVER_PATH = "1k60AtjPiqYzlFJMjlpqxikVLBwoHopn3DOR7jjIZAjg";
-    static public String LICENSE_SHEET_RANGE = "A2:D";
+    static public String LICENSE_SHEET_RANGE = "A2:F";
     static public String LICENSE_SHEET_NAME = "License";
     static public int LICENSE_MACADDRESS_MAP = 0;
     static public int LICENSE_CUS_NAME_MAP = 1;
@@ -205,12 +205,10 @@ public class MainActivity extends AppCompatActivity {
 
         // end of license check
 
-
-
-        if (googleSheetDownloadSts ==1 ){
-            Toast.makeText(this,"update OK",Toast.LENGTH_SHORT).show();
-        }else{
-            Toast.makeText(this,"update Not OK",Toast.LENGTH_SHORT).show();
+        try {
+            licenseCheck(this,LICENSE_SERVER_PATH,LICENSE_SHEET_NAME,LICENSE_SHEET_RANGE);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
 
         setContentView(R.layout.activity_main);
@@ -237,7 +235,8 @@ public class MainActivity extends AppCompatActivity {
 
         mainFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Toast.makeText(getApplication(),getDeviceMacNumber(getApplication()),Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplication(),MainActivity.licenseExpDate + ";" + MainActivity.licenseRemainDays,Toast.LENGTH_SHORT).show();
+
                 if(summaryFab.getVisibility()==View.GONE){
                     summaryFab.setVisibility(View.VISIBLE);
                 }else {
@@ -432,65 +431,99 @@ public class MainActivity extends AppCompatActivity {
         note=sharedPreferences.getString(LICENSE_SHARED_PREFS_NOTE,"");
     }
 
-    public static void licenseCheck(Context context,String licenseSheetID, String licenseSheetName,String licenseCells,String macAddress,String cusName,String cusPhone, String startDate, String expDate,
-                                    String note,int remaindDays) throws ParseException {
-        GoogleSheetInterface googleSheetInterface = new GoogleSheetInterface();
-        Boolean status = false;
+    public static void licenseCheck(final Context context, final String licenseSheetID, final String licenseSheetName, final String licenseCells) throws ParseException {
+        final GoogleSheetInterface googleSheetInterface = new GoogleSheetInterface();
         MainActivity.phoneMacAddress = getDeviceMacNumber(context);
-        cusName ="NA";
-        cusPhone = "NA";
-        startDate = "NA";
-        expDate = "NA";
-        note = "NA";
-        remaindDays = -1;
+        MainActivity.licenseCusName ="NA";
+        MainActivity.licenseCusPhone = "NA";
+        MainActivity.licenseStartDate = "NA";
+        MainActivity.licenseExpDate = "NA";
+        MainActivity.licenseNote = "NA";
+        MainActivity.licenseRemainDays = -1;
 
-        List<List<Object>> licenseDatabase = googleSheetInterface.getData(licenseSheetID,licenseSheetName,licenseCells,status);
+        //List<List<Object>> licenseDatabase = googleSheetInterface.getData(licenseSheetID,licenseSheetName,licenseCells,status);
 
-        // if able to read data from server to get license information -> variable status = true
-        if(status) {
-            for (int i = 0; i < licenseDatabase.size(); i++) {
-                if (licenseDatabase.get(i).get(MainActivity.LICENSE_MACADDRESS_MAP).toString().matches(MainActivity.phoneMacAddress)) {
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
 
-                    expDate = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_EXPIRE_DATE_MAP).toString();
-                    cusName = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_NAME_MAP).toString();
-                    cusPhone = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_PHONE_MAP).toString();
-                    startDate = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_START_DATE_MAP).toString();
-                    note = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_NOTE_MAP).toString();
+                    List<List<Object>> licenseDatabase = googleSheetInterface.getData(licenseSheetID,licenseSheetName,licenseCells);
+                // read from server
+                if(licenseDatabase.size() >0) {
+                    for (int i = 0; i < licenseDatabase.size(); i++) {
+                        if (licenseDatabase.get(i).get(MainActivity.LICENSE_MACADDRESS_MAP).toString().matches(MainActivity.phoneMacAddress)) {
+
+                            MainActivity.licenseExpDate = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_EXPIRE_DATE_MAP).toString();
+                            MainActivity.licenseCusName = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_NAME_MAP).toString();
+                            MainActivity.licenseCusPhone = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_PHONE_MAP).toString();
+                            MainActivity.licenseStartDate = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_START_DATE_MAP).toString();
+                            MainActivity.licenseNote = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_NOTE_MAP).toString();
+
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                            Date exp = null;
+                            try {
+                                exp = sdf.parse(MainActivity.licenseExpDate);
+                                String currentDateString = sdf.format(new Date());
+                                Date currentDate = sdf.parse(currentDateString);
+                                long diff = exp.getTime() - currentDate.getTime();
+                                MainActivity.licenseRemainDays = (int) (diff / (1000 * 60 * 60 * 24));
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+                            // update to local database
+
+                            GeneralInformation generalInformation = new GeneralInformation(0,MainActivity.licenseCusName,MainActivity.licenseCusPhone,MainActivity.licenseStartDate,
+                                    MainActivity.licenseExpDate,MainActivity.licenseNote,"NA","NA","NA",
+                                    "NA","NA");
+                            GoodsLocalGeneralDatabase goodsLocalGeneralDatabase =new GoodsLocalGeneralDatabase(context);
+                            goodsLocalGeneralDatabase.updateInfor(generalInformation);
+                        }
+                    }
+                } else {  // if can not read data from server then get from local
+
+                    GoodsLocalGeneralDatabase goodsLocalGeneralDatabase = new GoodsLocalGeneralDatabase(context);
+                    GeneralInformation licenseLocalInfor = goodsLocalGeneralDatabase.getInforBaseID(0);
+                    MainActivity.licenseCusName = licenseLocalInfor.getColumn01();
+                    MainActivity.licenseCusPhone = licenseLocalInfor.getColumn02();
+                    MainActivity.licenseStartDate = licenseLocalInfor.getColumn03();
+                    MainActivity.licenseExpDate = licenseLocalInfor.getColumn04();
+                    MainActivity.licenseNote = licenseLocalInfor.getColumn05();
 
                     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                    Date exp = sdf.parse(expDate);
-                    String currentDateString = sdf.format(new Date());
-                    Date currentDate = sdf.parse(currentDateString);
-                    long diff = exp.getTime() - currentDate.getTime();
-                    remaindDays = (int) (diff / (1000 * 60 * 60 * 24));
+                    Date exp = null;
+                    try {
+                        exp = sdf.parse(MainActivity.licenseExpDate);
+                        String currentDateString = sdf.format(new Date());
+                        Date currentDate = sdf.parse(currentDateString);
+                        long diff = exp.getTime() - currentDate.getTime();
+                        MainActivity.licenseRemainDays = (int) (diff / (1000 * 60 * 60 * 24));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
 
-                    // update to local database
 
-                    GeneralInformation generalInformation = new GeneralInformation(0,cusName,cusPhone,startDate,expDate,note,"NA","NA","NA",
-                            "NA","NA");
-                    GoodsLocalGeneralDatabase goodsLocalGeneralDatabase =new GoodsLocalGeneralDatabase(context);
-                    goodsLocalGeneralDatabase.updateInfor(generalInformation);
+
                 }
+
+
+
             }
-        } else {  // if can not read data from server then get from local
+        };
+        Thread t = new Thread(runnable);
+        t.start();
+        try {
+            t.join();
 
-            GoodsLocalGeneralDatabase goodsLocalGeneralDatabase = new GoodsLocalGeneralDatabase(context);
-            GeneralInformation licenseLocalInfor = goodsLocalGeneralDatabase.getInforBaseID(0);
-            cusName = licenseLocalInfor.getColumn01();
-            cusPhone = licenseLocalInfor.getColumn02();
-            startDate = licenseLocalInfor.getColumn03();
-            expDate = licenseLocalInfor.getColumn04();
-            note = licenseLocalInfor.getColumn05();
+        } catch (InterruptedException e) {
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            Date exp = sdf.parse(expDate);
-            String currentDateString = sdf.format(new Date());
-            Date currentDate = sdf.parse(currentDateString);
-            long diff = exp.getTime() - currentDate.getTime();
-            remaindDays = (int) (diff / (1000 * 60 * 60 * 24));
-
-
+            e.printStackTrace();
         }
+
+
+
+        // if able to read data from server to get license information -> variable status = true
+
 
 
     }
@@ -1371,9 +1404,9 @@ public class MainActivity extends AppCompatActivity {
         final Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                List<List<Object>> dataAll = googleSheetInterface.getData(MainActivity.DATABASE_SPREADSHEET_ID, MainActivity.DATABASE_SHEET_NAME, MainActivity.DATABASE_SHEET_RANGE, googleSheetResult);
+                List<List<Object>> dataAll = googleSheetInterface.getData(MainActivity.DATABASE_SPREADSHEET_ID, MainActivity.DATABASE_SHEET_NAME, MainActivity.DATABASE_SHEET_RANGE);
 
-                if(googleSheetResult){
+                if(dataAll.size()>0){
 
                     goodsLocalDatabase.deleteAllData();
                     for (int i =0;i<dataAll.size();i++){
@@ -1402,4 +1435,6 @@ public class MainActivity extends AppCompatActivity {
         }
     return result;
     }
+
+
 }

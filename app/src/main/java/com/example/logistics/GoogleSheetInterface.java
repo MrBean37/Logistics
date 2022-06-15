@@ -34,7 +34,7 @@ public class GoogleSheetInterface extends Activity {
 
 
 
-    public List<List<Object>> getData(String SPREADSHEET_ID,String sheetName, String cellName,Boolean status){
+    public List<List<Object>> getData(String SPREADSHEET_ID,String sheetName, String cellName){
         String range = sheetName+"!"+cellName;
         List<List<Object>> data = new ArrayList<>();
         GoogleCredential cred = null;
@@ -47,7 +47,6 @@ public class GoogleSheetInterface extends Activity {
                             .createScoped(Collections.singleton(SheetsScopes.SPREADSHEETS));
                 } catch (IOException e) {
                     e.printStackTrace();
-                    status =false;
                 }
                 sheetsService = new Sheets.Builder(transport, factory, cred)
                         .setApplicationName("GoogleSheetHelper")
@@ -57,12 +56,10 @@ public class GoogleSheetInterface extends Activity {
                             .get(SPREADSHEET_ID, range)
                             .execute();
                       data = result.getValues();
-                      status = true;
                       //MainActivity.googleSheetDownloadSts =1; //update status
 
                 } catch (IOException e) {
                     Log.e("GSHelper", e.getLocalizedMessage());
-                    status = false;
                    // MainActivity.googleSheetDownloadSts =0;
                 }
         return data;
