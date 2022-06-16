@@ -66,10 +66,10 @@ public class GoogleSheetInterface extends Activity {
     }
 
 
-    public void updateRangeData(String SPREADSHEET_ID,String sheetName, String cellName, List<List<Object>> listData, Boolean status){
+    public boolean updateRangeData(String SPREADSHEET_ID,String sheetName, String cellName, List<List<Object>> listData){
         UpdateValuesResponse response = null;
+        boolean status =false;
         String range = sheetName+"!"+cellName;
-        List<List<Object>> data = new ArrayList<>();
         GoogleCredential cred = null;
         // InputStream stream = getResources().openRawResource(
         //       getResources().getIdentifier("secret",
@@ -99,18 +99,18 @@ public class GoogleSheetInterface extends Activity {
                    // MainActivity.googleSheetUploadoadSts=1; //update status
                 } catch (IOException e) {
                     e.printStackTrace();
-                    status = false;
                 }
                 if (response == null) {
                     status = false;
                 }else {
                     status = true;
                 }
+                return status;
     }
 
     public int getTotalRows(String SPREADSHEET_ID,String sheetName){
         String range = sheetName+"!A1:B";
-    int totalRows = 0;
+    int totalRows = -1;
         GoogleCredential cred = null;
         // InputStream stream = getResources().openRawResource(
         //       getResources().getIdentifier("secret",
@@ -121,6 +121,7 @@ public class GoogleSheetInterface extends Activity {
                     .createScoped(Collections.singleton(SheetsScopes.SPREADSHEETS));
         } catch (IOException e) {
             e.printStackTrace();
+            totalRows = -1;
         }
         sheetsService = new Sheets.Builder(transport, factory, cred)
                 .setApplicationName("GoogleSheetHelper")
@@ -133,12 +134,14 @@ public class GoogleSheetInterface extends Activity {
 
         } catch (IOException e) {
             Log.e("GSHelper", e.getLocalizedMessage());
+            totalRows = -1;
         }
         return totalRows;
     }
 
-    public void deleteAllData (String SPREADSHEET_ID, String sheetName, String cellName, Boolean status){
+    public boolean deleteAllData (String SPREADSHEET_ID, String sheetName, String cellName){
         ClearValuesResponse response = null;
+        boolean status =false;
 
         String range = sheetName+"!"+cellName;
         //List<List<Object>> data = new ArrayList<>();
@@ -171,7 +174,9 @@ public class GoogleSheetInterface extends Activity {
         }else {
             status = true;
         }
+        return status;
 
     }
+
 
 };
