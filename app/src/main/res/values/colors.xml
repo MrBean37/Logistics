@@ -6,7 +6,7 @@
     <color name="colorSecondaryLight">#FFFFFF</color>
 
     <color name="colorAccent">#03DAC5</color>
-    <color name="black">#F44336</color>
+    <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="yellow">#FFFF00</color>
     <color name="fuchsia">#FF00FF</color>

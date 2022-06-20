@@ -114,6 +114,15 @@ public class GoodsScanFragment extends Fragment {
             }
         });
 
+        goodsQRCodeScanBt.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                MainActivity.scanQRcode(getActivity(),myFragment);
+
+            }
+        });
+
         return view;
     }
 

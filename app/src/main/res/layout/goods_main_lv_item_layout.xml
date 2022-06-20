@@ -3,74 +3,80 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:background="#071E22"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <TextView
-            android:textSize="13dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18dp"
             android:text="Loại Hàng Hóa"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         </TextView>
         <TextView
+            android:textColor="@color/white"
             android:id="@+id/goods_main_lv_item_type"
             android:gravity="center"
             android:text="Thực Phẩm"
-            android:textSize="13dp"
+            android:textSize="18dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         </TextView>
 
         <TextView
-            android:textSize="13dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18dp"
             android:text="Người Gửi"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         </TextView>
         <TextView
+            android:textColor="@color/white"
             android:id="@+id/goods_main_lv_item_sender_name"
             android:gravity="center"
             android:text="Nguyễn Văn Gửi"
-            android:textSize="13dp"
+            android:textSize="18dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         </TextView>
         <TextView
+            android:textColor="@color/white"
             android:id="@+id/goods_main_lv_item_sender_address"
             android:gravity="center"
             android:text="A2 An Bình City, 232 Phạm Văn Đồng Cổ Nhuế 1"
-            android:textSize="13dp"
+            android:textSize="18dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         </TextView>
 
 
         <TextView
-            android:textSize="13dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18dp"
             android:text="Người Nhận"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         </TextView>
         <TextView
+            android:textColor="@color/white"
             android:id="@+id/goods_main_lv_item_receiver_name"
             android:gravity="center"
             android:text="Nguyễn Văn Nhận"
-            android:textSize="13dp"
+            android:textSize="18dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         </TextView>
         <TextView
+            android:textColor="@color/white"
             android:id="@+id/goods_main_lv_item_receiver_address"
             android:gravity="center"
             android:text="A2 An Bình City, 232 Phạm Văn Đồng Cổ Nhuế 1"
-            android:textSize="13dp"
+            android:textSize="18dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         </TextView>
-
-
-
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

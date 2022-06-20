@@ -22,6 +22,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
@@ -182,26 +183,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // check permission
-        if (getApplicationContext().checkSelfPermission(Manifest.permission.CALL_PHONE)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission has not been granted, therefore prompt the user to grant permission
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.CALL_PHONE}, 1);
-        }
-
-        if (getApplicationContext().checkSelfPermission(Manifest.permission.READ_PHONE_STATE)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission has not been granted, therefore prompt the user to grant permission
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_PHONE_STATE}, 1);
-        }
-
-        if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_WIFI_STATE)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission has not been granted, therefore prompt the user to grant permission
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_WIFI_STATE}, 1);
-        }
+        checkPermission(getApplicationContext(),this);
 
 
         //licenseLocalSaveData("a","b");
@@ -218,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //check the remain days
-        if (MainActivity.licenseRemainDays > 0) {
+        if (MainActivity.licenseRemainDays > -2) {
             setContentView(R.layout.activity_main);
 
             mainViewPager = findViewById(R.id.main_view_page);
@@ -1120,6 +1102,19 @@ public class MainActivity extends AppCompatActivity {
         integrator.initiateScan();
     }
 
+    public static void scanQRcode(Activity activity, Fragment fragment) {
+        IntentIntegrator integrator = new IntentIntegrator(activity).forSupportFragment(fragment);
+
+        //IntentIntegrator integrator = new IntentIntegrator(getActivity());
+        // use forSupportFragment or forFragment method to use fragments instead of activity
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
+        integrator.setPrompt("Scan Mã Hàng");
+        integrator.setBeepEnabled(true);
+        integrator.setOrientationLocked(true);
+        integrator.setCaptureActivity(Capture.class);
+        integrator.initiateScan();
+    }
+
     public static void spinderGoodsStatus(Context context, Spinner spinner) {
         //parameter for spinner
         String[] goodsStsSelectList = new String[]{"Chưa Nhận", "Đang Ở Văn Phòng", "Đang Vận Chuyển", "Đang Ở Kho", "Đang Giao", "Đã Hoàn Thành"};
@@ -1483,6 +1478,33 @@ public class MainActivity extends AppCompatActivity {
 
         AlertDialog alert11 = builder1.create();
         alert11.show();
+
+    }
+
+    public static void checkPermission(Context context, Activity activity){
+        if (context.checkSelfPermission(Manifest.permission.CALL_PHONE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission has not been granted, therefore prompt the user to grant permission
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.CALL_PHONE}, 1);
+        }
+
+        if (context.checkSelfPermission(Manifest.permission.READ_PHONE_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission has not been granted, therefore prompt the user to grant permission
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.READ_PHONE_STATE}, 1);
+        }
+
+        if (context.checkSelfPermission(Manifest.permission.ACCESS_WIFI_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission has not been granted, therefore prompt the user to grant permission
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.ACCESS_WIFI_STATE}, 1);
+        }
+
+        WifiManager wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+        wifiManager.setWifiEnabled(true);
 
     }
 
