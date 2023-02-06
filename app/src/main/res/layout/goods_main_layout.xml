@@ -14,6 +14,7 @@
    </androidx.constraintlayout.widget.Guideline>
 
     <ListView
+        android:listSelector="@color/aqua"
         android:id="@+id/goods_main_listview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
