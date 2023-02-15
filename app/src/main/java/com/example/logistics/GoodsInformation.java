@@ -5,14 +5,19 @@ import java.io.Serializable;
 public class GoodsInformation implements Serializable {
 
     private int goodsID;
-    private String goodsCode;
+    private String goodsCode;   //barcode
     private String goodsName;
-    private String goodsType;
-    private String goodsSts;
-    private String goodsQuantity;
-    private String goodsUnit;
+    private String goodsType;   //food, document....
+    private String goodsSts;    //on delivery, on store, already handover to customer
+    private String goodsQuantity; // 1/2
+    private String goodsUnit;     //box
     private String goodsWeight;
-    private String goodsMoney;
+    private String goodsValue;     //value of good
+
+    //goodsMoney = goodsMoneyDelivery + goodsShipFee
+    private String goodsMoney;     //total money customer have to pay
+    private String goodsMoneyDelivery;     // Tien thu ho (COD)
+    private String goodsShipFee;     //tien phi ship
     private String goodsDate;
     private String goodsLocation;
     private String goodsNote;
@@ -42,12 +47,12 @@ public class GoodsInformation implements Serializable {
 
     }
 
-    public GoodsInformation(int goodsID, String goodsCode, String goodsName, String goodsType, String goodsSts, String goodsQuantity, String goodsUnit,
-                            String goodsWeight, String goodsMoney, String goodsDate, String goodsLocation, String goodsNote, String goodsSendName,
-                            String goodsSendID, String goodsSendPhone, String goodsSendCity, String goodsSendDistrict, String goodsSendProvince,
-                            String goodsSendCalled, String goodsSendDate, String goodsSendNote, String goodsReceiveName, String goodsReceiveID,
-                            String goodsReceivePhone, String goodsReceiveCity, String goodsReceiveDistrict, String goodsReceiveProvince, String goodsReceiveCalled,
-                            String goodsReceiveDate, String goodsReceiveNote) {
+    public GoodsInformation(int goodsID, String goodsCode, String goodsName, String goodsType, String goodsSts, String goodsQuantity, String goodsUnit, String goodsWeight,
+                            String goodsValue, String goodsMoney, String goodsMoneyDelivery, String goodsShipFee, String goodsDate, String goodsLocation, String goodsNote,
+                            String goodsSendName, String goodsSendID, String goodsSendPhone, String goodsSendCity, String goodsSendDistrict, String goodsSendProvince,
+                            String goodsSendCalled, String goodsSendDate, String goodsSendNote, String goodsReceiveName, String goodsReceiveID, String goodsReceivePhone,
+                            String goodsReceiveCity, String goodsReceiveDistrict, String goodsReceiveProvince, String goodsReceiveCalled, String goodsReceiveDate,
+                            String goodsReceiveNote) {
         this.goodsID = goodsID;
         this.goodsCode = goodsCode;
         this.goodsName = goodsName;
@@ -56,7 +61,10 @@ public class GoodsInformation implements Serializable {
         this.goodsQuantity = goodsQuantity;
         this.goodsUnit = goodsUnit;
         this.goodsWeight = goodsWeight;
+        this.goodsValue = goodsValue;
         this.goodsMoney = goodsMoney;
+        this.goodsMoneyDelivery = goodsMoneyDelivery;
+        this.goodsShipFee = goodsShipFee;
         this.goodsDate = goodsDate;
         this.goodsLocation = goodsLocation;
         this.goodsNote = goodsNote;
@@ -79,13 +87,13 @@ public class GoodsInformation implements Serializable {
         this.goodsReceiveDate = goodsReceiveDate;
         this.goodsReceiveNote = goodsReceiveNote;
     }
-    //this construction to create new object without ID (primary key) to avoid dupplicate ID when add new one
-    public GoodsInformation(String goodsCode, String goodsName, String goodsType, String goodsSts, String goodsQuantity, String goodsUnit,
-                            String goodsWeight, String goodsMoney, String goodsDate, String goodsLocation, String goodsNote, String goodsSendName,
-                            String goodsSendID, String goodsSendPhone, String goodsSendCity, String goodsSendDistrict, String goodsSendProvince,
-                            String goodsSendCalled, String goodsSendDate, String goodsSendNote, String goodsReceiveName, String goodsReceiveID,
-                            String goodsReceivePhone, String goodsReceiveCity, String goodsReceiveDistrict, String goodsReceiveProvince, String goodsReceiveCalled,
-                            String goodsReceiveDate, String goodsReceiveNote) {
+
+    public GoodsInformation(String goodsCode, String goodsName, String goodsType, String goodsSts, String goodsQuantity, String goodsUnit, String goodsWeight,
+                            String goodsValue, String goodsMoney, String goodsMoneyDelivery, String goodsShipFee, String goodsDate, String goodsLocation, String goodsNote,
+                            String goodsSendName, String goodsSendID, String goodsSendPhone, String goodsSendCity, String goodsSendDistrict, String goodsSendProvince,
+                            String goodsSendCalled, String goodsSendDate, String goodsSendNote, String goodsReceiveName, String goodsReceiveID, String goodsReceivePhone,
+                            String goodsReceiveCity, String goodsReceiveDistrict, String goodsReceiveProvince, String goodsReceiveCalled, String goodsReceiveDate,
+                            String goodsReceiveNote) {
         this.goodsCode = goodsCode;
         this.goodsName = goodsName;
         this.goodsType = goodsType;
@@ -93,7 +101,10 @@ public class GoodsInformation implements Serializable {
         this.goodsQuantity = goodsQuantity;
         this.goodsUnit = goodsUnit;
         this.goodsWeight = goodsWeight;
+        this.goodsValue = goodsValue;
         this.goodsMoney = goodsMoney;
+        this.goodsMoneyDelivery = goodsMoneyDelivery;
+        this.goodsShipFee = goodsShipFee;
         this.goodsDate = goodsDate;
         this.goodsLocation = goodsLocation;
         this.goodsNote = goodsNote;
@@ -181,12 +192,36 @@ public class GoodsInformation implements Serializable {
         this.goodsWeight = goodsWeight;
     }
 
+    public String getGoodsValue() {
+        return goodsValue;
+    }
+
+    public void setGoodsValue(String goodsValue) {
+        this.goodsValue = goodsValue;
+    }
+
     public String getGoodsMoney() {
         return goodsMoney;
     }
 
     public void setGoodsMoney(String goodsMoney) {
         this.goodsMoney = goodsMoney;
+    }
+
+    public String getGoodsMoneyDelivery() {
+        return goodsMoneyDelivery;
+    }
+
+    public void setGoodsMoneyDelivery(String goodsMoneyDelivery) {
+        this.goodsMoneyDelivery = goodsMoneyDelivery;
+    }
+
+    public String getGoodsShipFee() {
+        return goodsShipFee;
+    }
+
+    public void setGoodsShipFee(String goodsShipFee) {
+        this.goodsShipFee = goodsShipFee;
     }
 
     public String getGoodsDate() {

@@ -32,7 +32,10 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
     private static final String COLUMN_GOODS_QUANTITY = "Goods_Quantity";
     private static final String COLUMN_GOODS_UNIT = "Goods_Unit";
     private static final String COLUMN_GOODS_WEIGHT = "Goods_Weight";
+    private static final String COLUMN_GOODS_VALUE = "Goods_Value";
     private static final String COLUMN_GOODS_MONEY = "Goods_Money";
+    private static final String COLUMN_GOODS_MONEY_DELIVERY = "Goods_Money_Delivery";
+    private static final String COLUMN_GOODS_SHIP_FEE = "Goods_Ship_Fee";
     private static final String COLUMN_GOODS_DATE = "Goods_Date";
     private static final String COLUMN_GOODS_LOCATION = "Goods_Location";
     private static final String COLUMN_GOODS_NOTE = "Goods_Note";
@@ -72,8 +75,8 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
         String script = "CREATE TABLE " + TABLE_NOTE + "("
                 + COLUMN_GOODS_ID + " INTEGER PRIMARY KEY,"+ COLUMN_GOODS_CODE + " TEXT,"
                 + COLUMN_GOODS_NAME + " TEXT,"+ COLUMN_GOODS_TYPE + " TEXT,"+ COLUMN_GOODS_STS + " TEXT,"
-                + COLUMN_GOODS_QUANTITY + " TEXT,"+ COLUMN_GOODS_UNIT + " TEXT,"+ COLUMN_GOODS_WEIGHT + " TEXT,"
-                + COLUMN_GOODS_MONEY + " TEXT," + COLUMN_GOODS_DATE + " TEXT," + COLUMN_GOODS_LOCATION + " TEXT," + COLUMN_GOODS_NOTE + " TEXT,"+ COLUMN_GOODS_SEND_NAME + " TEXT," + COLUMN_GOODS_SEND_ID + " TEXT,"+ COLUMN_GOODS_SEND_PHONE + " TEXT,"
+                + COLUMN_GOODS_QUANTITY + " TEXT,"+ COLUMN_GOODS_UNIT + " TEXT,"+ COLUMN_GOODS_WEIGHT + " TEXT,"+ COLUMN_GOODS_VALUE + " TEXT,"
+                + COLUMN_GOODS_MONEY + " TEXT," + COLUMN_GOODS_MONEY_DELIVERY + " TEXT," + COLUMN_GOODS_SHIP_FEE + " TEXT," + COLUMN_GOODS_DATE + " TEXT," + COLUMN_GOODS_LOCATION + " TEXT," + COLUMN_GOODS_NOTE + " TEXT,"+ COLUMN_GOODS_SEND_NAME + " TEXT," + COLUMN_GOODS_SEND_ID + " TEXT,"+ COLUMN_GOODS_SEND_PHONE + " TEXT,"
                 + COLUMN_GOODS_SEND_CITY + " TEXT,"+ COLUMN_GOODS_SEND_DISTRICT + " TEXT,"+ COLUMN_GOODS_SEND_PROVINCE + " TEXT,"
                 + COLUMN_GOODS_SEND_CALLED + " TEXT," + COLUMN_GOODS_SEND_DATE + " TEXT," + COLUMN_GOODS_SEND_NOTE + " TEXT,"+ COLUMN_GOODS_RECEIVE_NAME + " TEXT," + COLUMN_GOODS_RECEIVE_ID + " TEXT,"
                 + COLUMN_GOODS_RECEIVE_PHONE + " TEXT,"+ COLUMN_GOODS_RECEIVE_CITY + " TEXT,"+ COLUMN_GOODS_RECEIVE_DISTRICT + " TEXT,"
@@ -107,7 +110,7 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
             for (int i = -1; i < 40; i++) {
                 String ten_goods = "Hàng số " + i;
                 goods = new GoodsInformation();
-                goods.setGoodsID(i);
+                //goods.setGoodsID(i);
                 goods.setGoodsCode(ten_goods +"Code");
                 goods.setGoodsMoney(ten_goods + "Money");
                 goods.setGoodsName(ten_goods + "Name");
@@ -116,6 +119,9 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
                 goods.setGoodsType(ten_goods + "type");
                 goods.setGoodsUnit(ten_goods + "Unit");
                 goods.setGoodsWeight(ten_goods + "Weight");
+                goods.setGoodsValue(ten_goods + "Value");
+                goods.setGoodsMoneyDelivery(ten_goods + "Money Delivery");
+                goods.setGoodsShipFee(ten_goods + "Ship Fee");
                 goods.setGoodsDate(ten_goods + "Date");
                 goods.setGoodsLocation(ten_goods + "Location");
                 goods.setGoodsNote(ten_goods + "Note");
@@ -165,7 +171,10 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
         value.put(COLUMN_GOODS_QUANTITY,goods.getGoodsQuantity());
         value.put(COLUMN_GOODS_UNIT,goods.getGoodsUnit());
         value.put(COLUMN_GOODS_WEIGHT,goods.getGoodsWeight());
+        value.put(COLUMN_GOODS_VALUE,goods.getGoodsValue());
         value.put(COLUMN_GOODS_MONEY,goods.getGoodsMoney());
+        value.put(COLUMN_GOODS_MONEY_DELIVERY,goods.getGoodsMoneyDelivery());
+        value.put(COLUMN_GOODS_SHIP_FEE,goods.getGoodsShipFee());
         value.put(COLUMN_GOODS_DATE,goods.getGoodsDate());
         value.put(COLUMN_GOODS_LOCATION,goods.getGoodsLocation());
         value.put(COLUMN_GOODS_NOTE,goods.getGoodsNote());
@@ -207,7 +216,8 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
         GoodsInformation goods = new GoodsInformation();
 
         Cursor cursor = db.query(TABLE_NOTE, new String[]{COLUMN_GOODS_ID,COLUMN_GOODS_CODE,COLUMN_GOODS_NAME,
-                        COLUMN_GOODS_TYPE,COLUMN_GOODS_STS,COLUMN_GOODS_QUANTITY,COLUMN_GOODS_UNIT,COLUMN_GOODS_WEIGHT,COLUMN_GOODS_MONEY,COLUMN_GOODS_DATE,COLUMN_GOODS_LOCATION,COLUMN_GOODS_NOTE,
+                        COLUMN_GOODS_TYPE,COLUMN_GOODS_STS,COLUMN_GOODS_QUANTITY,COLUMN_GOODS_UNIT,COLUMN_GOODS_WEIGHT,COLUMN_GOODS_VALUE,COLUMN_GOODS_MONEY,
+                        COLUMN_GOODS_MONEY_DELIVERY,COLUMN_GOODS_SHIP_FEE,COLUMN_GOODS_DATE,COLUMN_GOODS_LOCATION,COLUMN_GOODS_NOTE,
                         COLUMN_GOODS_SEND_NAME,COLUMN_GOODS_SEND_ID,COLUMN_GOODS_SEND_PHONE,COLUMN_GOODS_SEND_CITY,COLUMN_GOODS_SEND_DISTRICT,COLUMN_GOODS_SEND_PROVINCE,
                         COLUMN_GOODS_SEND_CALLED,COLUMN_GOODS_SEND_DATE,COLUMN_GOODS_SEND_NOTE,COLUMN_GOODS_RECEIVE_NAME,COLUMN_GOODS_RECEIVE_ID,COLUMN_GOODS_RECEIVE_PHONE,COLUMN_GOODS_RECEIVE_CITY,
                         COLUMN_GOODS_RECEIVE_DISTRICT,COLUMN_GOODS_RECEIVE_PROVICE,COLUMN_GOODS_RECEIVE_CALLED,COLUMN_GOODS_RECEIVE_DATE,COLUMN_GOODS_RECEIVE_NOTE}, COLUMN_GOODS_ID + "=?",
@@ -224,30 +234,33 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
             goods.setGoodsQuantity(cursor.getString(5));
             goods.setGoodsUnit(cursor.getString(6));
             goods.setGoodsWeight(cursor.getString(7));
-            goods.setGoodsMoney(cursor.getString(8));
-            goods.setGoodsDate(cursor.getString(9));
-            goods.setGoodsLocation(cursor.getString(10));
-            goods.setGoodsNote(cursor.getString(11));
+            goods.setGoodsValue(cursor.getString(8));
+            goods.setGoodsMoney(cursor.getString(9));
+            goods.setGoodsMoneyDelivery(cursor.getString(10));
+            goods.setGoodsShipFee(cursor.getString(11));
+            goods.setGoodsDate(cursor.getString(12));
+            goods.setGoodsLocation(cursor.getString(13));
+            goods.setGoodsNote(cursor.getString(14));
 
-            goods.setGoodsSendName(cursor.getString(12));
-            goods.setGoodsSendID(cursor.getString(13));
-            goods.setGoodsSendPhone(cursor.getString(14));
-            goods.setGoodsSendCity(cursor.getString(15));
-            goods.setGoodsSendDistrict(cursor.getString(16));
-            goods.setGoodsSendProvince(cursor.getString(17));
-            goods.setGoodsSendCalled(cursor.getString(18));
-            goods.setGoodsSendDate(cursor.getString(19));
-            goods.setGoodsSendNote(cursor.getString(20));
+            goods.setGoodsSendName(cursor.getString(15));
+            goods.setGoodsSendID(cursor.getString(16));
+            goods.setGoodsSendPhone(cursor.getString(17));
+            goods.setGoodsSendCity(cursor.getString(18));
+            goods.setGoodsSendDistrict(cursor.getString(19));
+            goods.setGoodsSendProvince(cursor.getString(20));
+            goods.setGoodsSendCalled(cursor.getString(21));
+            goods.setGoodsSendDate(cursor.getString(22));
+            goods.setGoodsSendNote(cursor.getString(23));
 
-            goods.setGoodsReceiveName(cursor.getString(21));
-            goods.setGoodsReceiveID(cursor.getString(22));
-            goods.setGoodsReceivePhone(cursor.getString(23));
-            goods.setGoodsReceiveCity(cursor.getString(24));
-            goods.setGoodsReceiveDistrict(cursor.getString(25));
-            goods.setGoodsReceiveProvince(cursor.getString(26));
-            goods.setGoodsReceiveCalled(cursor.getString(27));
-            goods.setGoodsReceiveDate(cursor.getString(28));
-            goods.setGoodsReceiveNote(cursor.getString(29));
+            goods.setGoodsReceiveName(cursor.getString(24));
+            goods.setGoodsReceiveID(cursor.getString(25));
+            goods.setGoodsReceivePhone(cursor.getString(26));
+            goods.setGoodsReceiveCity(cursor.getString(27));
+            goods.setGoodsReceiveDistrict(cursor.getString(28));
+            goods.setGoodsReceiveProvince(cursor.getString(29));
+            goods.setGoodsReceiveCalled(cursor.getString(30));
+            goods.setGoodsReceiveDate(cursor.getString(31));
+            goods.setGoodsReceiveNote(cursor.getString(32));
 
             cursor.close();
         } else {
@@ -265,7 +278,8 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
         List<GoodsInformation> goodsList = new ArrayList<GoodsInformation>();
 
         Cursor cursor = db.query(TABLE_NOTE, new String[]{COLUMN_GOODS_ID,COLUMN_GOODS_CODE,COLUMN_GOODS_NAME,
-                        COLUMN_GOODS_TYPE,COLUMN_GOODS_STS,COLUMN_GOODS_QUANTITY,COLUMN_GOODS_UNIT,COLUMN_GOODS_WEIGHT,COLUMN_GOODS_MONEY,COLUMN_GOODS_DATE,COLUMN_GOODS_LOCATION,COLUMN_GOODS_NOTE,
+                        COLUMN_GOODS_TYPE,COLUMN_GOODS_STS,COLUMN_GOODS_QUANTITY,COLUMN_GOODS_UNIT,COLUMN_GOODS_WEIGHT,COLUMN_GOODS_VALUE,COLUMN_GOODS_MONEY,
+                        COLUMN_GOODS_MONEY_DELIVERY,COLUMN_GOODS_SHIP_FEE,COLUMN_GOODS_DATE,COLUMN_GOODS_LOCATION,COLUMN_GOODS_NOTE,
                         COLUMN_GOODS_SEND_NAME,COLUMN_GOODS_SEND_ID,COLUMN_GOODS_SEND_PHONE,COLUMN_GOODS_SEND_CITY,COLUMN_GOODS_SEND_DISTRICT,COLUMN_GOODS_SEND_PROVINCE,
                         COLUMN_GOODS_SEND_CALLED,COLUMN_GOODS_SEND_DATE,COLUMN_GOODS_SEND_NOTE,COLUMN_GOODS_RECEIVE_NAME,COLUMN_GOODS_RECEIVE_ID,COLUMN_GOODS_RECEIVE_PHONE,COLUMN_GOODS_RECEIVE_CITY,
                         COLUMN_GOODS_RECEIVE_DISTRICT,COLUMN_GOODS_RECEIVE_PROVICE,COLUMN_GOODS_RECEIVE_CALLED,COLUMN_GOODS_RECEIVE_DATE,COLUMN_GOODS_RECEIVE_NOTE}, COLUMN_GOODS_RECEIVE_PHONE + " LIKE ?",
@@ -285,30 +299,33 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
                 goods.setGoodsQuantity(cursor.getString(5));
                 goods.setGoodsUnit(cursor.getString(6));
                 goods.setGoodsWeight(cursor.getString(7));
-                goods.setGoodsMoney(cursor.getString(8));
-                goods.setGoodsDate(cursor.getString(9));
-                goods.setGoodsLocation(cursor.getString(10));
-                goods.setGoodsNote(cursor.getString(11));
+                goods.setGoodsValue(cursor.getString(8));
+                goods.setGoodsMoney(cursor.getString(9));
+                goods.setGoodsMoneyDelivery(cursor.getString(10));
+                goods.setGoodsShipFee(cursor.getString(11));
+                goods.setGoodsDate(cursor.getString(12));
+                goods.setGoodsLocation(cursor.getString(13));
+                goods.setGoodsNote(cursor.getString(14));
 
-                goods.setGoodsSendName(cursor.getString(12));
-                goods.setGoodsSendID(cursor.getString(13));
-                goods.setGoodsSendPhone(cursor.getString(14));
-                goods.setGoodsSendCity(cursor.getString(15));
-                goods.setGoodsSendDistrict(cursor.getString(16));
-                goods.setGoodsSendProvince(cursor.getString(17));
-                goods.setGoodsSendCalled(cursor.getString(18));
-                goods.setGoodsSendDate(cursor.getString(19));
-                goods.setGoodsSendNote(cursor.getString(20));
+                goods.setGoodsSendName(cursor.getString(15));
+                goods.setGoodsSendID(cursor.getString(16));
+                goods.setGoodsSendPhone(cursor.getString(17));
+                goods.setGoodsSendCity(cursor.getString(18));
+                goods.setGoodsSendDistrict(cursor.getString(19));
+                goods.setGoodsSendProvince(cursor.getString(20));
+                goods.setGoodsSendCalled(cursor.getString(21));
+                goods.setGoodsSendDate(cursor.getString(22));
+                goods.setGoodsSendNote(cursor.getString(23));
 
-                goods.setGoodsReceiveName(cursor.getString(21));
-                goods.setGoodsReceiveID(cursor.getString(22));
-                goods.setGoodsReceivePhone(cursor.getString(23));
-                goods.setGoodsReceiveCity(cursor.getString(24));
-                goods.setGoodsReceiveDistrict(cursor.getString(25));
-                goods.setGoodsReceiveProvince(cursor.getString(26));
-                goods.setGoodsReceiveCalled(cursor.getString(27));
-                goods.setGoodsReceiveDate(cursor.getString(28));
-                goods.setGoodsReceiveNote(cursor.getString(29));
+                goods.setGoodsReceiveName(cursor.getString(24));
+                goods.setGoodsReceiveID(cursor.getString(25));
+                goods.setGoodsReceivePhone(cursor.getString(26));
+                goods.setGoodsReceiveCity(cursor.getString(27));
+                goods.setGoodsReceiveDistrict(cursor.getString(28));
+                goods.setGoodsReceiveProvince(cursor.getString(29));
+                goods.setGoodsReceiveCalled(cursor.getString(30));
+                goods.setGoodsReceiveDate(cursor.getString(31));
+                goods.setGoodsReceiveNote(cursor.getString(32));
 
                 // Adding note to list
                 goodsList.add(goods);
@@ -327,7 +344,8 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
         List<GoodsInformation> goodsList = new ArrayList<GoodsInformation>();
 
         Cursor cursor = db.query(TABLE_NOTE, new String[]{COLUMN_GOODS_ID,COLUMN_GOODS_CODE,COLUMN_GOODS_NAME,
-                        COLUMN_GOODS_TYPE,COLUMN_GOODS_STS,COLUMN_GOODS_QUANTITY,COLUMN_GOODS_UNIT,COLUMN_GOODS_WEIGHT,COLUMN_GOODS_MONEY,COLUMN_GOODS_DATE,COLUMN_GOODS_LOCATION,COLUMN_GOODS_NOTE,
+                        COLUMN_GOODS_TYPE,COLUMN_GOODS_STS,COLUMN_GOODS_QUANTITY,COLUMN_GOODS_UNIT,COLUMN_GOODS_WEIGHT,COLUMN_GOODS_VALUE,COLUMN_GOODS_MONEY,
+                        COLUMN_GOODS_MONEY_DELIVERY,COLUMN_GOODS_SHIP_FEE,COLUMN_GOODS_DATE,COLUMN_GOODS_LOCATION,COLUMN_GOODS_NOTE,
                         COLUMN_GOODS_SEND_NAME,COLUMN_GOODS_SEND_ID,COLUMN_GOODS_SEND_PHONE,COLUMN_GOODS_SEND_CITY,COLUMN_GOODS_SEND_DISTRICT,COLUMN_GOODS_SEND_PROVINCE,
                         COLUMN_GOODS_SEND_CALLED,COLUMN_GOODS_SEND_DATE,COLUMN_GOODS_SEND_NOTE,COLUMN_GOODS_RECEIVE_NAME,COLUMN_GOODS_RECEIVE_ID,COLUMN_GOODS_RECEIVE_PHONE,COLUMN_GOODS_RECEIVE_CITY,
                         COLUMN_GOODS_RECEIVE_DISTRICT,COLUMN_GOODS_RECEIVE_PROVICE,COLUMN_GOODS_RECEIVE_CALLED,COLUMN_GOODS_RECEIVE_DATE,COLUMN_GOODS_RECEIVE_NOTE}, COLUMN_GOODS_SEND_PHONE + " LIKE ?",
@@ -347,30 +365,33 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
                 goods.setGoodsQuantity(cursor.getString(5));
                 goods.setGoodsUnit(cursor.getString(6));
                 goods.setGoodsWeight(cursor.getString(7));
-                goods.setGoodsMoney(cursor.getString(8));
-                goods.setGoodsDate(cursor.getString(9));
-                goods.setGoodsLocation(cursor.getString(10));
-                goods.setGoodsNote(cursor.getString(11));
+                goods.setGoodsValue(cursor.getString(8));
+                goods.setGoodsMoney(cursor.getString(9));
+                goods.setGoodsMoneyDelivery(cursor.getString(10));
+                goods.setGoodsShipFee(cursor.getString(11));
+                goods.setGoodsDate(cursor.getString(12));
+                goods.setGoodsLocation(cursor.getString(13));
+                goods.setGoodsNote(cursor.getString(14));
 
-                goods.setGoodsSendName(cursor.getString(12));
-                goods.setGoodsSendID(cursor.getString(13));
-                goods.setGoodsSendPhone(cursor.getString(14));
-                goods.setGoodsSendCity(cursor.getString(15));
-                goods.setGoodsSendDistrict(cursor.getString(16));
-                goods.setGoodsSendProvince(cursor.getString(17));
-                goods.setGoodsSendCalled(cursor.getString(18));
-                goods.setGoodsSendDate(cursor.getString(19));
-                goods.setGoodsSendNote(cursor.getString(20));
+                goods.setGoodsSendName(cursor.getString(15));
+                goods.setGoodsSendID(cursor.getString(16));
+                goods.setGoodsSendPhone(cursor.getString(17));
+                goods.setGoodsSendCity(cursor.getString(18));
+                goods.setGoodsSendDistrict(cursor.getString(19));
+                goods.setGoodsSendProvince(cursor.getString(20));
+                goods.setGoodsSendCalled(cursor.getString(21));
+                goods.setGoodsSendDate(cursor.getString(22));
+                goods.setGoodsSendNote(cursor.getString(23));
 
-                goods.setGoodsReceiveName(cursor.getString(21));
-                goods.setGoodsReceiveID(cursor.getString(22));
-                goods.setGoodsReceivePhone(cursor.getString(23));
-                goods.setGoodsReceiveCity(cursor.getString(24));
-                goods.setGoodsReceiveDistrict(cursor.getString(25));
-                goods.setGoodsReceiveProvince(cursor.getString(26));
-                goods.setGoodsReceiveCalled(cursor.getString(27));
-                goods.setGoodsReceiveDate(cursor.getString(28));
-                goods.setGoodsReceiveNote(cursor.getString(29));
+                goods.setGoodsReceiveName(cursor.getString(24));
+                goods.setGoodsReceiveID(cursor.getString(25));
+                goods.setGoodsReceivePhone(cursor.getString(26));
+                goods.setGoodsReceiveCity(cursor.getString(27));
+                goods.setGoodsReceiveDistrict(cursor.getString(28));
+                goods.setGoodsReceiveProvince(cursor.getString(29));
+                goods.setGoodsReceiveCalled(cursor.getString(30));
+                goods.setGoodsReceiveDate(cursor.getString(31));
+                goods.setGoodsReceiveNote(cursor.getString(32));
 
                 // Adding note to list
                 goodsList.add(goods);
@@ -389,7 +410,8 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
         List<GoodsInformation> goodsList = new ArrayList<GoodsInformation>();
 
         Cursor cursor = db.query(TABLE_NOTE, new String[]{COLUMN_GOODS_ID,COLUMN_GOODS_CODE,COLUMN_GOODS_NAME,
-                        COLUMN_GOODS_TYPE,COLUMN_GOODS_STS,COLUMN_GOODS_QUANTITY,COLUMN_GOODS_UNIT,COLUMN_GOODS_WEIGHT,COLUMN_GOODS_MONEY,COLUMN_GOODS_DATE,COLUMN_GOODS_LOCATION,COLUMN_GOODS_NOTE,
+                        COLUMN_GOODS_TYPE,COLUMN_GOODS_STS,COLUMN_GOODS_QUANTITY,COLUMN_GOODS_UNIT,COLUMN_GOODS_WEIGHT,COLUMN_GOODS_VALUE,COLUMN_GOODS_MONEY,
+                        COLUMN_GOODS_MONEY_DELIVERY,COLUMN_GOODS_SHIP_FEE,COLUMN_GOODS_DATE,COLUMN_GOODS_LOCATION,COLUMN_GOODS_NOTE,
                         COLUMN_GOODS_SEND_NAME,COLUMN_GOODS_SEND_ID,COLUMN_GOODS_SEND_PHONE,COLUMN_GOODS_SEND_CITY,COLUMN_GOODS_SEND_DISTRICT,COLUMN_GOODS_SEND_PROVINCE,
                         COLUMN_GOODS_SEND_CALLED,COLUMN_GOODS_SEND_DATE,COLUMN_GOODS_SEND_NOTE,COLUMN_GOODS_RECEIVE_NAME,COLUMN_GOODS_RECEIVE_ID,COLUMN_GOODS_RECEIVE_PHONE,COLUMN_GOODS_RECEIVE_CITY,
                         COLUMN_GOODS_RECEIVE_DISTRICT,COLUMN_GOODS_RECEIVE_PROVICE,COLUMN_GOODS_RECEIVE_CALLED,COLUMN_GOODS_RECEIVE_DATE,COLUMN_GOODS_RECEIVE_NOTE}, COLUMN_GOODS_CODE + "=?",
@@ -409,30 +431,33 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
                 goods.setGoodsQuantity(cursor.getString(5));
                 goods.setGoodsUnit(cursor.getString(6));
                 goods.setGoodsWeight(cursor.getString(7));
-                goods.setGoodsMoney(cursor.getString(8));
-                goods.setGoodsDate(cursor.getString(9));
-                goods.setGoodsLocation(cursor.getString(10));
-                goods.setGoodsNote(cursor.getString(11));
+                goods.setGoodsValue(cursor.getString(8));
+                goods.setGoodsMoney(cursor.getString(9));
+                goods.setGoodsMoneyDelivery(cursor.getString(10));
+                goods.setGoodsShipFee(cursor.getString(11));
+                goods.setGoodsDate(cursor.getString(12));
+                goods.setGoodsLocation(cursor.getString(13));
+                goods.setGoodsNote(cursor.getString(14));
 
-                goods.setGoodsSendName(cursor.getString(12));
-                goods.setGoodsSendID(cursor.getString(13));
-                goods.setGoodsSendPhone(cursor.getString(14));
-                goods.setGoodsSendCity(cursor.getString(15));
-                goods.setGoodsSendDistrict(cursor.getString(16));
-                goods.setGoodsSendProvince(cursor.getString(17));
-                goods.setGoodsSendCalled(cursor.getString(18));
-                goods.setGoodsSendDate(cursor.getString(19));
-                goods.setGoodsSendNote(cursor.getString(20));
+                goods.setGoodsSendName(cursor.getString(15));
+                goods.setGoodsSendID(cursor.getString(16));
+                goods.setGoodsSendPhone(cursor.getString(17));
+                goods.setGoodsSendCity(cursor.getString(18));
+                goods.setGoodsSendDistrict(cursor.getString(19));
+                goods.setGoodsSendProvince(cursor.getString(20));
+                goods.setGoodsSendCalled(cursor.getString(21));
+                goods.setGoodsSendDate(cursor.getString(22));
+                goods.setGoodsSendNote(cursor.getString(23));
 
-                goods.setGoodsReceiveName(cursor.getString(21));
-                goods.setGoodsReceiveID(cursor.getString(22));
-                goods.setGoodsReceivePhone(cursor.getString(23));
-                goods.setGoodsReceiveCity(cursor.getString(24));
-                goods.setGoodsReceiveDistrict(cursor.getString(25));
-                goods.setGoodsReceiveProvince(cursor.getString(26));
-                goods.setGoodsReceiveCalled(cursor.getString(27));
-                goods.setGoodsReceiveDate(cursor.getString(28));
-                goods.setGoodsReceiveNote(cursor.getString(29));
+                goods.setGoodsReceiveName(cursor.getString(24));
+                goods.setGoodsReceiveID(cursor.getString(25));
+                goods.setGoodsReceivePhone(cursor.getString(26));
+                goods.setGoodsReceiveCity(cursor.getString(27));
+                goods.setGoodsReceiveDistrict(cursor.getString(28));
+                goods.setGoodsReceiveProvince(cursor.getString(29));
+                goods.setGoodsReceiveCalled(cursor.getString(30));
+                goods.setGoodsReceiveDate(cursor.getString(31));
+                goods.setGoodsReceiveNote(cursor.getString(32));
 
                 // Adding note to list
                 goodsList.add(goods);
@@ -451,7 +476,8 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
         List<GoodsInformation> goodsList = new ArrayList<GoodsInformation>();
 
         Cursor cursor = db.query(TABLE_NOTE, new String[]{COLUMN_GOODS_ID,COLUMN_GOODS_CODE,COLUMN_GOODS_NAME,
-                        COLUMN_GOODS_TYPE,COLUMN_GOODS_STS,COLUMN_GOODS_QUANTITY,COLUMN_GOODS_UNIT,COLUMN_GOODS_WEIGHT,COLUMN_GOODS_MONEY,COLUMN_GOODS_DATE,COLUMN_GOODS_LOCATION,COLUMN_GOODS_NOTE,
+                        COLUMN_GOODS_TYPE,COLUMN_GOODS_STS,COLUMN_GOODS_QUANTITY,COLUMN_GOODS_UNIT,COLUMN_GOODS_WEIGHT,COLUMN_GOODS_VALUE,COLUMN_GOODS_MONEY,
+                        COLUMN_GOODS_MONEY_DELIVERY,COLUMN_GOODS_SHIP_FEE,COLUMN_GOODS_DATE,COLUMN_GOODS_LOCATION,COLUMN_GOODS_NOTE,
                         COLUMN_GOODS_SEND_NAME,COLUMN_GOODS_SEND_ID,COLUMN_GOODS_SEND_PHONE,COLUMN_GOODS_SEND_CITY,COLUMN_GOODS_SEND_DISTRICT,COLUMN_GOODS_SEND_PROVINCE,
                         COLUMN_GOODS_SEND_CALLED,COLUMN_GOODS_SEND_DATE,COLUMN_GOODS_SEND_NOTE,COLUMN_GOODS_RECEIVE_NAME,COLUMN_GOODS_RECEIVE_ID,COLUMN_GOODS_RECEIVE_PHONE,COLUMN_GOODS_RECEIVE_CITY,
                         COLUMN_GOODS_RECEIVE_DISTRICT,COLUMN_GOODS_RECEIVE_PROVICE,COLUMN_GOODS_RECEIVE_CALLED,COLUMN_GOODS_RECEIVE_DATE,COLUMN_GOODS_RECEIVE_NOTE}, COLUMN_GOODS_SEND_NAME + " LIKE ?",
@@ -471,30 +497,33 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
                 goods.setGoodsQuantity(cursor.getString(5));
                 goods.setGoodsUnit(cursor.getString(6));
                 goods.setGoodsWeight(cursor.getString(7));
-                goods.setGoodsMoney(cursor.getString(8));
-                goods.setGoodsDate(cursor.getString(9));
-                goods.setGoodsLocation(cursor.getString(10));
-                goods.setGoodsNote(cursor.getString(11));
+                goods.setGoodsValue(cursor.getString(8));
+                goods.setGoodsMoney(cursor.getString(9));
+                goods.setGoodsMoneyDelivery(cursor.getString(10));
+                goods.setGoodsShipFee(cursor.getString(11));
+                goods.setGoodsDate(cursor.getString(12));
+                goods.setGoodsLocation(cursor.getString(13));
+                goods.setGoodsNote(cursor.getString(14));
 
-                goods.setGoodsSendName(cursor.getString(12));
-                goods.setGoodsSendID(cursor.getString(13));
-                goods.setGoodsSendPhone(cursor.getString(14));
-                goods.setGoodsSendCity(cursor.getString(15));
-                goods.setGoodsSendDistrict(cursor.getString(16));
-                goods.setGoodsSendProvince(cursor.getString(17));
-                goods.setGoodsSendCalled(cursor.getString(18));
-                goods.setGoodsSendDate(cursor.getString(19));
-                goods.setGoodsSendNote(cursor.getString(20));
+                goods.setGoodsSendName(cursor.getString(15));
+                goods.setGoodsSendID(cursor.getString(16));
+                goods.setGoodsSendPhone(cursor.getString(17));
+                goods.setGoodsSendCity(cursor.getString(18));
+                goods.setGoodsSendDistrict(cursor.getString(19));
+                goods.setGoodsSendProvince(cursor.getString(20));
+                goods.setGoodsSendCalled(cursor.getString(21));
+                goods.setGoodsSendDate(cursor.getString(22));
+                goods.setGoodsSendNote(cursor.getString(23));
 
-                goods.setGoodsReceiveName(cursor.getString(21));
-                goods.setGoodsReceiveID(cursor.getString(22));
-                goods.setGoodsReceivePhone(cursor.getString(23));
-                goods.setGoodsReceiveCity(cursor.getString(24));
-                goods.setGoodsReceiveDistrict(cursor.getString(25));
-                goods.setGoodsReceiveProvince(cursor.getString(26));
-                goods.setGoodsReceiveCalled(cursor.getString(27));
-                goods.setGoodsReceiveDate(cursor.getString(28));
-                goods.setGoodsReceiveNote(cursor.getString(29));
+                goods.setGoodsReceiveName(cursor.getString(24));
+                goods.setGoodsReceiveID(cursor.getString(25));
+                goods.setGoodsReceivePhone(cursor.getString(26));
+                goods.setGoodsReceiveCity(cursor.getString(27));
+                goods.setGoodsReceiveDistrict(cursor.getString(28));
+                goods.setGoodsReceiveProvince(cursor.getString(29));
+                goods.setGoodsReceiveCalled(cursor.getString(30));
+                goods.setGoodsReceiveDate(cursor.getString(31));
+                goods.setGoodsReceiveNote(cursor.getString(32));
 
                 // Adding note to list
                 goodsList.add(goods);
@@ -513,7 +542,8 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
         List<GoodsInformation> goodsList = new ArrayList<GoodsInformation>();
 
         Cursor cursor = db.query(TABLE_NOTE, new String[]{COLUMN_GOODS_ID,COLUMN_GOODS_CODE,COLUMN_GOODS_NAME,
-                        COLUMN_GOODS_TYPE,COLUMN_GOODS_STS,COLUMN_GOODS_QUANTITY,COLUMN_GOODS_UNIT,COLUMN_GOODS_WEIGHT,COLUMN_GOODS_MONEY,COLUMN_GOODS_DATE,COLUMN_GOODS_LOCATION,COLUMN_GOODS_NOTE,
+                        COLUMN_GOODS_TYPE,COLUMN_GOODS_STS,COLUMN_GOODS_QUANTITY,COLUMN_GOODS_UNIT,COLUMN_GOODS_WEIGHT,COLUMN_GOODS_VALUE,COLUMN_GOODS_MONEY,
+                        COLUMN_GOODS_MONEY_DELIVERY,COLUMN_GOODS_SHIP_FEE,COLUMN_GOODS_DATE,COLUMN_GOODS_LOCATION,COLUMN_GOODS_NOTE,
                         COLUMN_GOODS_SEND_NAME,COLUMN_GOODS_SEND_ID,COLUMN_GOODS_SEND_PHONE,COLUMN_GOODS_SEND_CITY,COLUMN_GOODS_SEND_DISTRICT,COLUMN_GOODS_SEND_PROVINCE,
                         COLUMN_GOODS_SEND_CALLED,COLUMN_GOODS_SEND_DATE,COLUMN_GOODS_SEND_NOTE,COLUMN_GOODS_RECEIVE_NAME,COLUMN_GOODS_RECEIVE_ID,COLUMN_GOODS_RECEIVE_PHONE,COLUMN_GOODS_RECEIVE_CITY,
                         COLUMN_GOODS_RECEIVE_DISTRICT,COLUMN_GOODS_RECEIVE_PROVICE,COLUMN_GOODS_RECEIVE_CALLED,COLUMN_GOODS_RECEIVE_DATE,COLUMN_GOODS_RECEIVE_NOTE}, COLUMN_GOODS_RECEIVE_NAME + " LIKE ?",
@@ -533,30 +563,33 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
                 goods.setGoodsQuantity(cursor.getString(5));
                 goods.setGoodsUnit(cursor.getString(6));
                 goods.setGoodsWeight(cursor.getString(7));
-                goods.setGoodsMoney(cursor.getString(8));
-                goods.setGoodsDate(cursor.getString(9));
-                goods.setGoodsLocation(cursor.getString(10));
-                goods.setGoodsNote(cursor.getString(11));
+                goods.setGoodsValue(cursor.getString(8));
+                goods.setGoodsMoney(cursor.getString(9));
+                goods.setGoodsMoneyDelivery(cursor.getString(10));
+                goods.setGoodsShipFee(cursor.getString(11));
+                goods.setGoodsDate(cursor.getString(12));
+                goods.setGoodsLocation(cursor.getString(13));
+                goods.setGoodsNote(cursor.getString(14));
 
-                goods.setGoodsSendName(cursor.getString(12));
-                goods.setGoodsSendID(cursor.getString(13));
-                goods.setGoodsSendPhone(cursor.getString(14));
-                goods.setGoodsSendCity(cursor.getString(15));
-                goods.setGoodsSendDistrict(cursor.getString(16));
-                goods.setGoodsSendProvince(cursor.getString(17));
-                goods.setGoodsSendCalled(cursor.getString(18));
-                goods.setGoodsSendDate(cursor.getString(19));
-                goods.setGoodsSendNote(cursor.getString(20));
+                goods.setGoodsSendName(cursor.getString(15));
+                goods.setGoodsSendID(cursor.getString(16));
+                goods.setGoodsSendPhone(cursor.getString(17));
+                goods.setGoodsSendCity(cursor.getString(18));
+                goods.setGoodsSendDistrict(cursor.getString(19));
+                goods.setGoodsSendProvince(cursor.getString(20));
+                goods.setGoodsSendCalled(cursor.getString(21));
+                goods.setGoodsSendDate(cursor.getString(22));
+                goods.setGoodsSendNote(cursor.getString(23));
 
-                goods.setGoodsReceiveName(cursor.getString(21));
-                goods.setGoodsReceiveID(cursor.getString(22));
-                goods.setGoodsReceivePhone(cursor.getString(23));
-                goods.setGoodsReceiveCity(cursor.getString(24));
-                goods.setGoodsReceiveDistrict(cursor.getString(25));
-                goods.setGoodsReceiveProvince(cursor.getString(26));
-                goods.setGoodsReceiveCalled(cursor.getString(27));
-                goods.setGoodsReceiveDate(cursor.getString(28));
-                goods.setGoodsReceiveNote(cursor.getString(29));
+                goods.setGoodsReceiveName(cursor.getString(24));
+                goods.setGoodsReceiveID(cursor.getString(25));
+                goods.setGoodsReceivePhone(cursor.getString(26));
+                goods.setGoodsReceiveCity(cursor.getString(27));
+                goods.setGoodsReceiveDistrict(cursor.getString(28));
+                goods.setGoodsReceiveProvince(cursor.getString(29));
+                goods.setGoodsReceiveCalled(cursor.getString(30));
+                goods.setGoodsReceiveDate(cursor.getString(31));
+                goods.setGoodsReceiveNote(cursor.getString(32));
 
                 // Adding note to list
                 goodsList.add(goods);
@@ -575,7 +608,8 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
         List<GoodsInformation> goodsList = new ArrayList<GoodsInformation>();
 
         Cursor cursor = db.query(TABLE_NOTE, new String[]{COLUMN_GOODS_ID,COLUMN_GOODS_CODE,COLUMN_GOODS_NAME,
-                        COLUMN_GOODS_TYPE,COLUMN_GOODS_STS,COLUMN_GOODS_QUANTITY,COLUMN_GOODS_UNIT,COLUMN_GOODS_WEIGHT,COLUMN_GOODS_MONEY,COLUMN_GOODS_DATE,COLUMN_GOODS_LOCATION,COLUMN_GOODS_NOTE,
+                        COLUMN_GOODS_TYPE,COLUMN_GOODS_STS,COLUMN_GOODS_QUANTITY,COLUMN_GOODS_UNIT,COLUMN_GOODS_WEIGHT,COLUMN_GOODS_VALUE,COLUMN_GOODS_MONEY,
+                        COLUMN_GOODS_MONEY_DELIVERY,COLUMN_GOODS_SHIP_FEE,COLUMN_GOODS_DATE,COLUMN_GOODS_LOCATION,COLUMN_GOODS_NOTE,
                         COLUMN_GOODS_SEND_NAME,COLUMN_GOODS_SEND_ID,COLUMN_GOODS_SEND_PHONE,COLUMN_GOODS_SEND_CITY,COLUMN_GOODS_SEND_DISTRICT,COLUMN_GOODS_SEND_PROVINCE,
                         COLUMN_GOODS_SEND_CALLED,COLUMN_GOODS_SEND_DATE,COLUMN_GOODS_SEND_NOTE,COLUMN_GOODS_RECEIVE_NAME,COLUMN_GOODS_RECEIVE_ID,COLUMN_GOODS_RECEIVE_PHONE,COLUMN_GOODS_RECEIVE_CITY,
                         COLUMN_GOODS_RECEIVE_DISTRICT,COLUMN_GOODS_RECEIVE_PROVICE,COLUMN_GOODS_RECEIVE_CALLED,COLUMN_GOODS_RECEIVE_DATE,COLUMN_GOODS_RECEIVE_NOTE}, COLUMN_GOODS_STS + "=?",
@@ -596,30 +630,33 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
                 goods.setGoodsQuantity(cursor.getString(5));
                 goods.setGoodsUnit(cursor.getString(6));
                 goods.setGoodsWeight(cursor.getString(7));
-                goods.setGoodsMoney(cursor.getString(8));
-                goods.setGoodsDate(cursor.getString(9));
-                goods.setGoodsLocation(cursor.getString(10));
-                goods.setGoodsNote(cursor.getString(11));
+                goods.setGoodsValue(cursor.getString(8));
+                goods.setGoodsMoney(cursor.getString(9));
+                goods.setGoodsMoneyDelivery(cursor.getString(10));
+                goods.setGoodsShipFee(cursor.getString(11));
+                goods.setGoodsDate(cursor.getString(12));
+                goods.setGoodsLocation(cursor.getString(13));
+                goods.setGoodsNote(cursor.getString(14));
 
-                goods.setGoodsSendName(cursor.getString(12));
-                goods.setGoodsSendID(cursor.getString(13));
-                goods.setGoodsSendPhone(cursor.getString(14));
-                goods.setGoodsSendCity(cursor.getString(15));
-                goods.setGoodsSendDistrict(cursor.getString(16));
-                goods.setGoodsSendProvince(cursor.getString(17));
-                goods.setGoodsSendCalled(cursor.getString(18));
-                goods.setGoodsSendDate(cursor.getString(19));
-                goods.setGoodsSendNote(cursor.getString(20));
+                goods.setGoodsSendName(cursor.getString(15));
+                goods.setGoodsSendID(cursor.getString(16));
+                goods.setGoodsSendPhone(cursor.getString(17));
+                goods.setGoodsSendCity(cursor.getString(18));
+                goods.setGoodsSendDistrict(cursor.getString(19));
+                goods.setGoodsSendProvince(cursor.getString(20));
+                goods.setGoodsSendCalled(cursor.getString(21));
+                goods.setGoodsSendDate(cursor.getString(22));
+                goods.setGoodsSendNote(cursor.getString(23));
 
-                goods.setGoodsReceiveName(cursor.getString(21));
-                goods.setGoodsReceiveID(cursor.getString(22));
-                goods.setGoodsReceivePhone(cursor.getString(23));
-                goods.setGoodsReceiveCity(cursor.getString(24));
-                goods.setGoodsReceiveDistrict(cursor.getString(25));
-                goods.setGoodsReceiveProvince(cursor.getString(26));
-                goods.setGoodsReceiveCalled(cursor.getString(27));
-                goods.setGoodsReceiveDate(cursor.getString(28));
-                goods.setGoodsReceiveNote(cursor.getString(29));
+                goods.setGoodsReceiveName(cursor.getString(24));
+                goods.setGoodsReceiveID(cursor.getString(25));
+                goods.setGoodsReceivePhone(cursor.getString(26));
+                goods.setGoodsReceiveCity(cursor.getString(27));
+                goods.setGoodsReceiveDistrict(cursor.getString(28));
+                goods.setGoodsReceiveProvince(cursor.getString(29));
+                goods.setGoodsReceiveCalled(cursor.getString(30));
+                goods.setGoodsReceiveDate(cursor.getString(31));
+                goods.setGoodsReceiveNote(cursor.getString(32));
 
                 // Adding note to list
                 goodsList.add(goods);
@@ -638,7 +675,8 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
         List<GoodsInformation> goodsList = new ArrayList<GoodsInformation>();
 
         Cursor cursor = db.query(TABLE_NOTE, new String[]{COLUMN_GOODS_ID,COLUMN_GOODS_CODE,COLUMN_GOODS_NAME,
-                        COLUMN_GOODS_TYPE,COLUMN_GOODS_STS,COLUMN_GOODS_QUANTITY,COLUMN_GOODS_UNIT,COLUMN_GOODS_WEIGHT,COLUMN_GOODS_MONEY,COLUMN_GOODS_DATE,COLUMN_GOODS_LOCATION,COLUMN_GOODS_NOTE,
+                        COLUMN_GOODS_TYPE,COLUMN_GOODS_STS,COLUMN_GOODS_QUANTITY,COLUMN_GOODS_UNIT,COLUMN_GOODS_WEIGHT,COLUMN_GOODS_VALUE,COLUMN_GOODS_MONEY,
+                        COLUMN_GOODS_MONEY_DELIVERY,COLUMN_GOODS_SHIP_FEE,COLUMN_GOODS_DATE,COLUMN_GOODS_LOCATION,COLUMN_GOODS_NOTE,
                         COLUMN_GOODS_SEND_NAME,COLUMN_GOODS_SEND_ID,COLUMN_GOODS_SEND_PHONE,COLUMN_GOODS_SEND_CITY,COLUMN_GOODS_SEND_DISTRICT,COLUMN_GOODS_SEND_PROVINCE,
                         COLUMN_GOODS_SEND_CALLED,COLUMN_GOODS_SEND_DATE,COLUMN_GOODS_SEND_NOTE,COLUMN_GOODS_RECEIVE_NAME,COLUMN_GOODS_RECEIVE_ID,COLUMN_GOODS_RECEIVE_PHONE,COLUMN_GOODS_RECEIVE_CITY,
                         COLUMN_GOODS_RECEIVE_DISTRICT,COLUMN_GOODS_RECEIVE_PROVICE,COLUMN_GOODS_RECEIVE_CALLED,COLUMN_GOODS_RECEIVE_DATE,COLUMN_GOODS_RECEIVE_NOTE}, COLUMN_GOODS_LOCATION + "=?",
@@ -658,30 +696,33 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
                 goods.setGoodsQuantity(cursor.getString(5));
                 goods.setGoodsUnit(cursor.getString(6));
                 goods.setGoodsWeight(cursor.getString(7));
-                goods.setGoodsMoney(cursor.getString(8));
-                goods.setGoodsDate(cursor.getString(9));
-                goods.setGoodsLocation(cursor.getString(10));
-                goods.setGoodsNote(cursor.getString(11));
+                goods.setGoodsValue(cursor.getString(8));
+                goods.setGoodsMoney(cursor.getString(9));
+                goods.setGoodsMoneyDelivery(cursor.getString(10));
+                goods.setGoodsShipFee(cursor.getString(11));
+                goods.setGoodsDate(cursor.getString(12));
+                goods.setGoodsLocation(cursor.getString(13));
+                goods.setGoodsNote(cursor.getString(14));
 
-                goods.setGoodsSendName(cursor.getString(12));
-                goods.setGoodsSendID(cursor.getString(13));
-                goods.setGoodsSendPhone(cursor.getString(14));
-                goods.setGoodsSendCity(cursor.getString(15));
-                goods.setGoodsSendDistrict(cursor.getString(16));
-                goods.setGoodsSendProvince(cursor.getString(17));
-                goods.setGoodsSendCalled(cursor.getString(18));
-                goods.setGoodsSendDate(cursor.getString(19));
-                goods.setGoodsSendNote(cursor.getString(20));
+                goods.setGoodsSendName(cursor.getString(15));
+                goods.setGoodsSendID(cursor.getString(16));
+                goods.setGoodsSendPhone(cursor.getString(17));
+                goods.setGoodsSendCity(cursor.getString(18));
+                goods.setGoodsSendDistrict(cursor.getString(19));
+                goods.setGoodsSendProvince(cursor.getString(20));
+                goods.setGoodsSendCalled(cursor.getString(21));
+                goods.setGoodsSendDate(cursor.getString(22));
+                goods.setGoodsSendNote(cursor.getString(23));
 
-                goods.setGoodsReceiveName(cursor.getString(21));
-                goods.setGoodsReceiveID(cursor.getString(22));
-                goods.setGoodsReceivePhone(cursor.getString(23));
-                goods.setGoodsReceiveCity(cursor.getString(24));
-                goods.setGoodsReceiveDistrict(cursor.getString(25));
-                goods.setGoodsReceiveProvince(cursor.getString(26));
-                goods.setGoodsReceiveCalled(cursor.getString(27));
-                goods.setGoodsReceiveDate(cursor.getString(28));
-                goods.setGoodsReceiveNote(cursor.getString(29));
+                goods.setGoodsReceiveName(cursor.getString(24));
+                goods.setGoodsReceiveID(cursor.getString(25));
+                goods.setGoodsReceivePhone(cursor.getString(26));
+                goods.setGoodsReceiveCity(cursor.getString(27));
+                goods.setGoodsReceiveDistrict(cursor.getString(28));
+                goods.setGoodsReceiveProvince(cursor.getString(29));
+                goods.setGoodsReceiveCalled(cursor.getString(30));
+                goods.setGoodsReceiveDate(cursor.getString(31));
+                goods.setGoodsReceiveNote(cursor.getString(32));
 
                 // Adding note to list
                 goodsList.add(goods);
@@ -715,30 +756,33 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
                 goods.setGoodsQuantity(cursor.getString(5));
                 goods.setGoodsUnit(cursor.getString(6));
                 goods.setGoodsWeight(cursor.getString(7));
-                goods.setGoodsMoney(cursor.getString(8));
-                goods.setGoodsDate(cursor.getString(9));
-                goods.setGoodsLocation(cursor.getString(10));
-                goods.setGoodsNote(cursor.getString(11));
+                goods.setGoodsValue(cursor.getString(8));
+                goods.setGoodsMoney(cursor.getString(9));
+                goods.setGoodsMoneyDelivery(cursor.getString(10));
+                goods.setGoodsShipFee(cursor.getString(11));
+                goods.setGoodsDate(cursor.getString(12));
+                goods.setGoodsLocation(cursor.getString(13));
+                goods.setGoodsNote(cursor.getString(14));
 
-                goods.setGoodsSendName(cursor.getString(12));
-                goods.setGoodsSendID(cursor.getString(13));
-                goods.setGoodsSendPhone(cursor.getString(14));
-                goods.setGoodsSendCity(cursor.getString(15));
-                goods.setGoodsSendDistrict(cursor.getString(16));
-                goods.setGoodsSendProvince(cursor.getString(17));
-                goods.setGoodsSendCalled(cursor.getString(18));
-                goods.setGoodsSendDate(cursor.getString(19));
-                goods.setGoodsSendNote(cursor.getString(20));
+                goods.setGoodsSendName(cursor.getString(15));
+                goods.setGoodsSendID(cursor.getString(16));
+                goods.setGoodsSendPhone(cursor.getString(17));
+                goods.setGoodsSendCity(cursor.getString(18));
+                goods.setGoodsSendDistrict(cursor.getString(19));
+                goods.setGoodsSendProvince(cursor.getString(20));
+                goods.setGoodsSendCalled(cursor.getString(21));
+                goods.setGoodsSendDate(cursor.getString(22));
+                goods.setGoodsSendNote(cursor.getString(23));
 
-                goods.setGoodsReceiveName(cursor.getString(21));
-                goods.setGoodsReceiveID(cursor.getString(22));
-                goods.setGoodsReceivePhone(cursor.getString(23));
-                goods.setGoodsReceiveCity(cursor.getString(24));
-                goods.setGoodsReceiveDistrict(cursor.getString(25));
-                goods.setGoodsReceiveProvince(cursor.getString(26));
-                goods.setGoodsReceiveCalled(cursor.getString(27));
-                goods.setGoodsReceiveDate(cursor.getString(28));
-                goods.setGoodsReceiveNote(cursor.getString(29));
+                goods.setGoodsReceiveName(cursor.getString(24));
+                goods.setGoodsReceiveID(cursor.getString(25));
+                goods.setGoodsReceivePhone(cursor.getString(26));
+                goods.setGoodsReceiveCity(cursor.getString(27));
+                goods.setGoodsReceiveDistrict(cursor.getString(28));
+                goods.setGoodsReceiveProvince(cursor.getString(29));
+                goods.setGoodsReceiveCalled(cursor.getString(30));
+                goods.setGoodsReceiveDate(cursor.getString(31));
+                goods.setGoodsReceiveNote(cursor.getString(32));
 
                 // Adding note to list
                 goodsList.add(goods);
@@ -779,7 +823,10 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
         value.put(COLUMN_GOODS_QUANTITY,goods.getGoodsQuantity());
         value.put(COLUMN_GOODS_UNIT,goods.getGoodsUnit());
         value.put(COLUMN_GOODS_WEIGHT,goods.getGoodsWeight());
+        value.put(COLUMN_GOODS_VALUE,goods.getGoodsValue());
         value.put(COLUMN_GOODS_MONEY,goods.getGoodsMoney());
+        value.put(COLUMN_GOODS_MONEY_DELIVERY,goods.getGoodsMoneyDelivery());
+        value.put(COLUMN_GOODS_SHIP_FEE,goods.getGoodsShipFee());
         value.put(COLUMN_GOODS_DATE,goods.getGoodsDate());
         value.put(COLUMN_GOODS_LOCATION,goods.getGoodsLocation());
         value.put(COLUMN_GOODS_NOTE,goods.getGoodsNote());
