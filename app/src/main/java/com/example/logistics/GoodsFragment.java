@@ -135,6 +135,7 @@ public class GoodsFragment extends Fragment {
 
         goodsMainListview.setAdapter(new GoodsFragmentListAdapter(getActivity(), goodsAll));
 
+
         goodsMainTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -218,6 +219,7 @@ public class GoodsFragment extends Fragment {
             Object obj = (Object) lv.getItemAtPosition(acmi.position);
             //itemIDSelectedFromListview = lv.getAdapter().getItemId(acmi.position);
             itemIDSelectedFromListview = acmi.position;
+
 
             if (goodsMainTabLayout.getSelectedTabPosition() ==0){
                 MainActivity.goodsSelectFromListview = goodsAll.get(itemIDSelectedFromListview);

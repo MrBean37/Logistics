@@ -19,9 +19,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
@@ -51,13 +54,16 @@ import com.google.api.services.sheets.v4.model.ClearValuesResponse;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.net.NetworkInterface;
 import java.text.DateFormat;
 import java.text.FieldPosition;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -66,80 +72,84 @@ public class MainActivity extends AppCompatActivity {
 
     //license
     static public String LICENSE_SERVER_PATH = "1k60AtjPiqYzlFJMjlpqxikVLBwoHopn3DOR7jjIZAjg";
-    static public String LICENSE_SHEET_RANGE = "A2:D";
+    static public String LICENSE_SHEET_RANGE = "A2:I";
     static public String LICENSE_SHEET_NAME = "License";
     static public int LICENSE_MACADDRESS_MAP = 0;
     static public int LICENSE_CUS_NAME_MAP = 1;
     static public int LICENSE_CUS_PHONE_MAP = 2;
     static public int LICENSE_CUS_START_DATE_MAP = 3;
     static public int LICENSE_CUS_EXPIRE_DATE_MAP = 4;
-    static public int LICENSE_CUS_NOTE_MAP = 5;
+    static public int LICENSE_HOTLINE_MAP = 5;
+    static public int LICENSE_EMAIL_MAP = 6;
+    static public int LICENSE_ZALO_MAP = 7;
+    static public int LICENSE_CUS_NOTE_MAP = 8;
 
-    static public String phoneMacAddress ="";
-    static public String licenseCusName ="";
-    static public String licenseCusPhone ="";
+    static public String phoneMacAddress = "";
+    static public String licenseCusName = "";
+    static public String licenseCusPhone = "";
     static public String licenseStartDate = "";
-    static public String licenseExpDate ="";
-    static public String licenseNote ="";
+    static public String licenseExpDate = "";
+    static public String licenseHotline = "0827711088";
+    static public String licenseEmail = "daidauvan@gmail.com";
+    static public String licenseZalo = "0827711088";
+    static public String licenseNote = "";
     static public int licenseRemainDays;
     static public List<List<Object>> licenseInfor;
-    static public int licenseSheetDownloadSts=0;
+    static public int licenseSheetDownloadSts = 0;
     //static public int licenseSheetUploadoadSts=0;
 
-    static public final String LICENSE_SHARED_PREFS_NAME ="license";
-    static public final String LICENSE_SHARED_PREFS_MACADD ="licenseMacAdress";
-    static public final String LICENSE_SHARED_PREFS_CUS_NAME ="licenseCusName";
-    static public final String LICENSE_SHARED_PREFS_CUS_PHONE ="licenseCusPhone";
-    static public final String LICENSE_SHARED_PREFS_START_DATE ="licenseStartDate";
-    static public final String LICENSE_SHARED_PREFS_EXP_DATE ="licenseExpDate";
-    static public final String LICENSE_SHARED_PREFS_NOTE ="licenseNote";
-
-
+    static public final String LICENSE_SHARED_PREFS_NAME = "license";
+    static public final String LICENSE_SHARED_PREFS_MACADD = "licenseMacAdress";
+    static public final String LICENSE_SHARED_PREFS_CUS_NAME = "licenseCusName";
+    static public final String LICENSE_SHARED_PREFS_CUS_PHONE = "licenseCusPhone";
+    static public final String LICENSE_SHARED_PREFS_START_DATE = "licenseStartDate";
+    static public final String LICENSE_SHARED_PREFS_EXP_DATE = "licenseExpDate";
+    static public final String LICENSE_SHARED_PREFS_NOTE = "licenseNote";
 
 
     //database
-    static public final String DATABASE_SPREADSHEET_ID = "1f5VBaiZVyq5D9c1Nb0SO2nElNzvUQGdCP1VlerWSoM4";
-    static public String DATABASE_SHEET_RANGE = "A2:D";
-    static public String DATABASE_SHEET_NAME = "License";
+    static public final String DATABASE_SPREADSHEET_ID = "1k60AtjPiqYzlFJMjlpqxikVLBwoHopn3DOR7jjIZAjg";
+    static public String DATABASE_SHEET_RANGE = "A2:AC";
+    static public String DATABASE_SHEET_NAME = "LogisticData";
     static public List<List<Object>> dataAll;
     //database mapping
-    static public int GOODS_ID_MAP=0;
-    static public int GOODS_CODE_MAP=1;
-    static public int GOODS_NAME_MAP=2;
-    static public int GOODS_TYPE_MAP=3;
-    static public int GOODS_STS_MAP=4;
-    static public int GOODS_QUANTITY_MAP=5;
-    static public int GOODS_UNIT_MAP=6;
-    static public int GOODS_WEIGHT_MAP=7;
-    static public int GOODS_MONEY_MAP=8;
-    static public int GOODS_DATE_MAP=9;
-    static public int GOODS_LOCATION_MAP=10;
-    static public int GOODS_NOTE_MAP=11;
+    static public int GOODS_ID_MAP = 0;
+    static public int GOODS_CODE_MAP = 1;
+    static public int GOODS_NAME_MAP = 2;
+    static public int GOODS_TYPE_MAP = 3;
+    static public int GOODS_STS_MAP = 4;
+    static public int GOODS_QUANTITY_MAP = 5;
+    static public int GOODS_UNIT_MAP = 6;
+    static public int GOODS_WEIGHT_MAP = 7;
+    static public int GOODS_MONEY_MAP = 8;
+    static public int GOODS_DATE_MAP = 9;
+    static public int GOODS_LOCATION_MAP = 10;
+    static public int GOODS_NOTE_MAP = 11;
 
-    static public int GOODS_SENDNAME_MAP=12;
-    static public int GOODS_SENDID_MAP=13;
-    static public int GOODS_SENDPHONE_MAP=14;
-    static public int GOODS_SENDCITY_MAP=15;
-    static public int GOODS_SENDDISTRICT_MAP=16;
-    static public int GOODS_SENDPROVINCE_MAP=17;
-    static public int GOODS_SENDCALLED_MAP=18;
-    static public int GOODS_SENDDATE_MAP=19;
-    static public int GOODS_SENDNOTE_MAP=20;
+    static public int GOODS_SENDNAME_MAP = 12;
+    static public int GOODS_SENDID_MAP = 13;
+    static public int GOODS_SENDPHONE_MAP = 14;
+    static public int GOODS_SENDCITY_MAP = 15;
+    static public int GOODS_SENDDISTRICT_MAP = 16;
+    static public int GOODS_SENDPROVINCE_MAP = 17;
+    static public int GOODS_SENDCALLED_MAP = 18;
+    static public int GOODS_SENDDATE_MAP = 19;
+    static public int GOODS_SENDNOTE_MAP = 20;
 
-    static public int GOODS_RECEIVENAME_MAP=21;
-    static public int GOODS_RECEIVEID_MAP=22;
-    static public int GOODS_RECEIVEPHONE_MAP=23;
-    static public int GOODS_RECEIVECITY_MAP=24;
-    static public int GOODS_RECEIVEDISTRICT_MAP=25;
-    static public int GOODS_RECEIVEPROVINCE_MAP=26;
-    static public int GOODS_RECEIVECALLED_MAP=27;
-    static public int GOODS_RECEIVEDATE_MAP=28;
-    static public int GOODS_RECEIVENOTE_MAP=29;
+    static public int GOODS_RECEIVENAME_MAP = 21;
+    static public int GOODS_RECEIVEID_MAP = 22;
+    static public int GOODS_RECEIVEPHONE_MAP = 23;
+    static public int GOODS_RECEIVECITY_MAP = 24;
+    static public int GOODS_RECEIVEDISTRICT_MAP = 25;
+    static public int GOODS_RECEIVEPROVINCE_MAP = 26;
+    static public int GOODS_RECEIVECALLED_MAP = 27;
+    static public int GOODS_RECEIVEDATE_MAP = 28;
+    static public int GOODS_RECEIVENOTE_MAP = 29;
 
 
     // googlesheet upload and download status
-    static public int googleSheetDownloadSts=0;
-    static public int googleSheetUploadoadSts=0;
+    static public int googleSheetDownloadSts = 0;
+    static public int googleSheetUploadoadSts = 0;
 
 
     //floating button for main controll buttons
@@ -158,338 +168,367 @@ public class MainActivity extends AppCompatActivity {
 
     //Context menu and fragment active detect
     //0 -Main; 1 - GoodsFragment; 2 - GoodsSearchFragment; 3-GoodsScanFragment; 4- GoodsAddFragment
-    static public Integer curActiveFragment =0;
-    static public Integer lastActiveFragment =0;
+    static public Integer curActiveFragment = 0;
+    static public Integer lastActiveFragment = 0;
     static public GoodsInformation goodsSelectFromListview = new GoodsInformation();
 
     //Scan Result
-    static public String scanIDResult ="";
+    static public String scanIDResult = "";
 
     //General Setting
-   // public static String dateFormat ="dd/MM/yyyy";  // date only
+    // public static String dateFormat ="dd/MM/yyyy";  // date only
 
-    public static String dateFormat ="dd/MM/yyyy HH:mm:ss";  // date and time
-    public static boolean hours24HView =true;
+    public static String dateFormat = "dd/MM/yyyy HH:mm:ss";  // date and time
+    public static boolean hours24HView = true;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // check permission
-        if (getApplicationContext().checkSelfPermission(Manifest.permission.CALL_PHONE)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission has not been granted, therefore prompt the user to grant permission
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.CALL_PHONE}, 1);
-        }
-
-        if (getApplicationContext().checkSelfPermission(Manifest.permission.READ_PHONE_STATE)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission has not been granted, therefore prompt the user to grant permission
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_PHONE_STATE}, 1);
-        }
-
-        if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_WIFI_STATE)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission has not been granted, therefore prompt the user to grant permission
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_WIFI_STATE}, 1);
-        }
+        checkPermission(getApplicationContext(),this);
 
 
         //licenseLocalSaveData("a","b");
         // license information
-        final GoogleSheetInterface googleSheetInterface =new GoogleSheetInterface();
+        final GoogleSheetInterface googleSheetInterface = new GoogleSheetInterface();
 
 
         // end of license check
 
-
-
-        if (googleSheetDownloadSts ==1 ){
-            Toast.makeText(this,"update OK",Toast.LENGTH_SHORT).show();
-        }else{
-            Toast.makeText(this,"update Not OK",Toast.LENGTH_SHORT).show();
+        try {
+            licenseCheck(this, LICENSE_SERVER_PATH, LICENSE_SHEET_NAME, LICENSE_SHEET_RANGE);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
 
-        setContentView(R.layout.activity_main);
+        //check the remain days
+        if (MainActivity.licenseRemainDays > -2) {
+            setContentView(R.layout.activity_main);
 
-        mainViewPager = findViewById(R.id.main_view_page);
-        mainFab =findViewById(R.id.main_fab);
-        summaryFab =findViewById(R.id.summary_fab);
-        goodsFab =findViewById(R.id.goods_fab);
-        scanFab =findViewById(R.id.scan_fab);
-        searchFab =findViewById(R.id.search_fab);
-        uploadFab =findViewById(R.id.upload_fab);
-        downloadFab =findViewById(R.id.download_fab);
-        goodsAddFab =findViewById(R.id.add_goods_fab);
+            mainViewPager = findViewById(R.id.main_view_page);
+            mainFab = findViewById(R.id.main_fab);
+            summaryFab = findViewById(R.id.summary_fab);
+            goodsFab = findViewById(R.id.goods_fab);
+            scanFab = findViewById(R.id.scan_fab);
+            searchFab = findViewById(R.id.search_fab);
+            uploadFab = findViewById(R.id.upload_fab);
+            downloadFab = findViewById(R.id.download_fab);
+            goodsAddFab = findViewById(R.id.add_goods_fab);
 
-        //set float button visible and invisible
-        //at begining all float button have to invisible
-        summaryFab.setVisibility(View.GONE);
-        goodsFab.setVisibility(View.GONE);
-        scanFab.setVisibility(View.GONE);
-        searchFab.setVisibility(View.GONE);
-        uploadFab.setVisibility(View.GONE);
-        downloadFab.setVisibility(View.GONE);
-        goodsAddFab.setVisibility(View.GONE);
+            //set float button visible and invisible
+            //at begining all float button have to invisible
+            summaryFab.setVisibility(View.GONE);
+            goodsFab.setVisibility(View.GONE);
+            scanFab.setVisibility(View.GONE);
+            searchFab.setVisibility(View.GONE);
+            uploadFab.setVisibility(View.GONE);
+            downloadFab.setVisibility(View.GONE);
+            goodsAddFab.setVisibility(View.GONE);
 
-        mainFab.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Toast.makeText(getApplication(),getDeviceMacNumber(getApplication()),Toast.LENGTH_LONG).show();
-                if(summaryFab.getVisibility()==View.GONE){
-                    summaryFab.setVisibility(View.VISIBLE);
-                }else {
+            mainFab.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Toast.makeText(getApplication(), MainActivity.licenseExpDate + ";" + MainActivity.phoneMacAddress, Toast.LENGTH_SHORT).show();
+
+                    if (summaryFab.getVisibility() == View.GONE) {
+                        summaryFab.setVisibility(View.VISIBLE);
+                    } else {
+                        summaryFab.setVisibility(View.GONE);
+                    }
+
+                    if (goodsFab.getVisibility() == View.GONE) {
+                        goodsFab.setVisibility(View.VISIBLE);
+                    } else {
+                        goodsFab.setVisibility(View.GONE);
+                    }
+
+                    if (scanFab.getVisibility() == View.GONE) {
+                        scanFab.setVisibility(View.VISIBLE);
+                    } else {
+                        scanFab.setVisibility(View.GONE);
+                    }
+
+                    if (searchFab.getVisibility() == View.GONE) {
+                        searchFab.setVisibility(View.VISIBLE);
+                    } else {
+                        searchFab.setVisibility(View.GONE);
+                    }
+
+                    if (uploadFab.getVisibility() == View.GONE) {
+                        uploadFab.setVisibility(View.VISIBLE);
+                    } else {
+                        uploadFab.setVisibility(View.GONE);
+                    }
+
+                    if (downloadFab.getVisibility() == View.GONE) {
+                        downloadFab.setVisibility(View.VISIBLE);
+                    } else {
+                        downloadFab.setVisibility(View.GONE);
+                    }
+
+                    if (goodsAddFab.getVisibility() == View.GONE) {
+                        goodsAddFab.setVisibility(View.VISIBLE);
+                    } else {
+                        goodsAddFab.setVisibility(View.GONE);
+                    }
+
+                }
+            });
+
+            // create default data for testing
+            GoodsLocalDatabase goodsLocalDatabase = new GoodsLocalDatabase(this);
+            goodsLocalDatabase.createDefaultDatabase();
+
+
+            setupViewPager();
+            summaryFab.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    mainViewPager.setCurrentItem(0);
+
+                    lastActiveFragment = MainActivity.curActiveFragment; //set last fragment
+                    curActiveFragment = 0; //set active fragment
                     summaryFab.setVisibility(View.GONE);
-                }
-
-                if(goodsFab.getVisibility()==View.GONE){
-                    goodsFab.setVisibility(View.VISIBLE);
-                }else {
                     goodsFab.setVisibility(View.GONE);
-                }
-
-                if(scanFab.getVisibility()==View.GONE){
-                    scanFab.setVisibility(View.VISIBLE);
-                }else {
                     scanFab.setVisibility(View.GONE);
-                }
-
-                if(searchFab.getVisibility()==View.GONE){
-                    searchFab.setVisibility(View.VISIBLE);
-                }else {
                     searchFab.setVisibility(View.GONE);
-                }
-
-                if(uploadFab.getVisibility()==View.GONE){
-                    uploadFab.setVisibility(View.VISIBLE);
-                }else {
                     uploadFab.setVisibility(View.GONE);
-                }
-
-                if(downloadFab.getVisibility()==View.GONE){
-                    downloadFab.setVisibility(View.VISIBLE);
-                }else {
                     downloadFab.setVisibility(View.GONE);
-                }
-
-                if(goodsAddFab.getVisibility()==View.GONE){
-                    goodsAddFab.setVisibility(View.VISIBLE);
-                }else {
                     goodsAddFab.setVisibility(View.GONE);
                 }
+            });
 
-            }
-        });
-
-        // create default data for testing
-        GoodsLocalDatabase goodsLocalDatabase = new GoodsLocalDatabase(this);
-        goodsLocalDatabase.createDefaultDatabase();
-
-
-        setupViewPager();
-        summaryFab.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mainViewPager.setCurrentItem(0);
-
-                lastActiveFragment =  MainActivity.curActiveFragment; //set last fragment
-                curActiveFragment = 0; //set active fragment
-                summaryFab.setVisibility(View.GONE);
-                goodsFab.setVisibility(View.GONE);
-                scanFab.setVisibility(View.GONE);
-                searchFab.setVisibility(View.GONE);
-                uploadFab.setVisibility(View.GONE);
-                downloadFab.setVisibility(View.GONE);
-                goodsAddFab.setVisibility(View.GONE);
-            }
-        });
-
-        goodsFab.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mainViewPager.setCurrentItem(1);
-                lastActiveFragment =  curActiveFragment; //set last fragment
-                curActiveFragment = 1; //set active fragment
-                summaryFab.setVisibility(View.GONE);
-                goodsFab.setVisibility(View.GONE);
-                scanFab.setVisibility(View.GONE);
-                searchFab.setVisibility(View.GONE);
-                uploadFab.setVisibility(View.GONE);
-                downloadFab.setVisibility(View.GONE);
-                goodsAddFab.setVisibility(View.GONE);
-            }
-        });
-
-        searchFab.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mainViewPager.setCurrentItem(2);
-                lastActiveFragment =  curActiveFragment; //set last fragment
-                curActiveFragment = 2; //set active fragment
-                summaryFab.setVisibility(View.GONE);
-                goodsFab.setVisibility(View.GONE);
-                scanFab.setVisibility(View.GONE);
-                searchFab.setVisibility(View.GONE);
-                uploadFab.setVisibility(View.GONE);
-                downloadFab.setVisibility(View.GONE);
-                goodsAddFab.setVisibility(View.GONE);
-            }
-        });
-
-        scanFab.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mainViewPager.setCurrentItem(3);
-                lastActiveFragment =  curActiveFragment; //set last fragment
-                curActiveFragment = 3; //set active fragment
-                summaryFab.setVisibility(View.GONE);
-                goodsFab.setVisibility(View.GONE);
-                scanFab.setVisibility(View.GONE);
-                searchFab.setVisibility(View.GONE);
-                uploadFab.setVisibility(View.GONE);
-                downloadFab.setVisibility(View.GONE);
-                goodsAddFab.setVisibility(View.GONE);
-            }
-        });
-
-        goodsAddFab.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mainViewPager.setCurrentItem(4);
-                lastActiveFragment =  curActiveFragment; //set last fragment
-                curActiveFragment = 4; //set active fragment
-                summaryFab.setVisibility(View.GONE);
-                goodsFab.setVisibility(View.GONE);
-                scanFab.setVisibility(View.GONE);
-                searchFab.setVisibility(View.GONE);
-                uploadFab.setVisibility(View.GONE);
-                downloadFab.setVisibility(View.GONE);
-                goodsAddFab.setVisibility(View.GONE);
-            }
-        });
-
-        uploadFab.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                summaryFab.setVisibility(View.GONE);
-                goodsFab.setVisibility(View.GONE);
-                scanFab.setVisibility(View.GONE);
-                searchFab.setVisibility(View.GONE);
-                uploadFab.setVisibility(View.GONE);
-                downloadFab.setVisibility(View.GONE);
-                goodsAddFab.setVisibility(View.GONE);
-                boolean uploadResult = uploadData2Server(getApplication());
-                if (uploadResult){
-
-                    Toast.makeText(getApplicationContext(), "Cập Nhật Dữ Liệu Lên Thành Công", Toast.LENGTH_SHORT).show();
-                }else {
-                    Toast.makeText(getApplicationContext(), "Cập Nhật Dữ Liệu Lên Không Thành Công", Toast.LENGTH_SHORT).show();
+            goodsFab.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    mainViewPager.setCurrentItem(1);
+                    lastActiveFragment = curActiveFragment; //set last fragment
+                    curActiveFragment = 1; //set active fragment
+                    summaryFab.setVisibility(View.GONE);
+                    goodsFab.setVisibility(View.GONE);
+                    scanFab.setVisibility(View.GONE);
+                    searchFab.setVisibility(View.GONE);
+                    uploadFab.setVisibility(View.GONE);
+                    downloadFab.setVisibility(View.GONE);
+                    goodsAddFab.setVisibility(View.GONE);
                 }
+            });
 
-            }
-        });
-
-        downloadFab.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                summaryFab.setVisibility(View.GONE);
-                goodsFab.setVisibility(View.GONE);
-                scanFab.setVisibility(View.GONE);
-                searchFab.setVisibility(View.GONE);
-                uploadFab.setVisibility(View.GONE);
-                downloadFab.setVisibility(View.GONE);
-                goodsAddFab.setVisibility(View.GONE);
-
-                boolean downloadResult = downloadDataFromServer(getApplication());
-
-                if (downloadResult){
-                    Toast.makeText(getApplicationContext(), "Cập Nhật Dữ Xuống Lên Thành Công", Toast.LENGTH_SHORT).show();
-                }else {
-                    Toast.makeText(getApplicationContext(), "Cập Nhật Dữ Liệu Xuống Không Thành Công", Toast.LENGTH_SHORT).show();
+            searchFab.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    mainViewPager.setCurrentItem(2);
+                    lastActiveFragment = curActiveFragment; //set last fragment
+                    curActiveFragment = 2; //set active fragment
+                    summaryFab.setVisibility(View.GONE);
+                    goodsFab.setVisibility(View.GONE);
+                    scanFab.setVisibility(View.GONE);
+                    searchFab.setVisibility(View.GONE);
+                    uploadFab.setVisibility(View.GONE);
+                    downloadFab.setVisibility(View.GONE);
+                    goodsAddFab.setVisibility(View.GONE);
                 }
-            }
-        });
+            });
 
+            scanFab.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    mainViewPager.setCurrentItem(3);
+                    lastActiveFragment = curActiveFragment; //set last fragment
+                    curActiveFragment = 3; //set active fragment
+                    summaryFab.setVisibility(View.GONE);
+                    goodsFab.setVisibility(View.GONE);
+                    scanFab.setVisibility(View.GONE);
+                    searchFab.setVisibility(View.GONE);
+                    uploadFab.setVisibility(View.GONE);
+                    downloadFab.setVisibility(View.GONE);
+                    goodsAddFab.setVisibility(View.GONE);
+                }
+            });
+
+            goodsAddFab.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    mainViewPager.setCurrentItem(4);
+                    lastActiveFragment = curActiveFragment; //set last fragment
+                    curActiveFragment = 4; //set active fragment
+                    summaryFab.setVisibility(View.GONE);
+                    goodsFab.setVisibility(View.GONE);
+                    scanFab.setVisibility(View.GONE);
+                    searchFab.setVisibility(View.GONE);
+                    uploadFab.setVisibility(View.GONE);
+                    downloadFab.setVisibility(View.GONE);
+                    goodsAddFab.setVisibility(View.GONE);
+                }
+            });
+
+            uploadFab.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    summaryFab.setVisibility(View.GONE);
+                    goodsFab.setVisibility(View.GONE);
+                    scanFab.setVisibility(View.GONE);
+                    searchFab.setVisibility(View.GONE);
+                    uploadFab.setVisibility(View.GONE);
+                    downloadFab.setVisibility(View.GONE);
+                    goodsAddFab.setVisibility(View.GONE);
+                    boolean uploadResult = uploadData2Server(getApplication());
+                    if (uploadResult) {
+                        dialogPopupForInfor(MainActivity.this,"Cập Nhật Dữ Liệu Lên Thành Công");
+                    } else {
+                        dialogPopupForInfor(MainActivity.this,"Cập Nhật Dữ Liệu Lên Không Thành Công");
+                    }
+
+                }
+            });
+
+            downloadFab.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    summaryFab.setVisibility(View.GONE);
+                    goodsFab.setVisibility(View.GONE);
+                    scanFab.setVisibility(View.GONE);
+                    searchFab.setVisibility(View.GONE);
+                    uploadFab.setVisibility(View.GONE);
+                    downloadFab.setVisibility(View.GONE);
+                    goodsAddFab.setVisibility(View.GONE);
+
+                    boolean downloadResult = downloadDataFromServer(getApplication());
+
+                    if (downloadResult) {
+                        dialogPopupForInfor(MainActivity.this,"Cập Nhật Dữ Xuống Thành Công");
+                    } else {
+                        dialogPopupForInfor(MainActivity.this,"Cập Nhật Dữ Liệu Xuống Không Thành Công");
+                        //Toast.makeText(getApplicationContext(), "Cập Nhật Dữ Liệu Xuống Không Thành Công", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        } else {
+            setContentView(R.layout.expire_information_layout);
+        }
 
 
     }
 
-    public void licenseLocalSaveData(String macAddress, String cusName,String cusPhone, String startDate,String expDate,String note){
-        SharedPreferences sharedPreferences =getSharedPreferences(MainActivity.LICENSE_SHARED_PREFS_NAME,MODE_PRIVATE);
-        SharedPreferences.Editor editor =sharedPreferences.edit();
-        editor.putString(LICENSE_SHARED_PREFS_MACADD,macAddress);
-        editor.putString(LICENSE_SHARED_PREFS_CUS_NAME,cusName);
-        editor.putString(LICENSE_SHARED_PREFS_CUS_PHONE,cusPhone);
-        editor.putString(LICENSE_SHARED_PREFS_START_DATE,startDate);
-        editor.putString(LICENSE_SHARED_PREFS_EXP_DATE,expDate);
-        editor.putString(LICENSE_SHARED_PREFS_NOTE,note);
+    public void licenseLocalSaveData(String macAddress, String cusName, String cusPhone, String startDate, String expDate, String note) {
+        SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.LICENSE_SHARED_PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(LICENSE_SHARED_PREFS_MACADD, macAddress);
+        editor.putString(LICENSE_SHARED_PREFS_CUS_NAME, cusName);
+        editor.putString(LICENSE_SHARED_PREFS_CUS_PHONE, cusPhone);
+        editor.putString(LICENSE_SHARED_PREFS_START_DATE, startDate);
+        editor.putString(LICENSE_SHARED_PREFS_EXP_DATE, expDate);
+        editor.putString(LICENSE_SHARED_PREFS_NOTE, note);
         editor.apply();
 
     }
 
-    public void licenseLocalRetriveData(String macAddress, String cusName, String cusPhone, String startDate, String expDate, String note){
-        SharedPreferences sharedPreferences =getSharedPreferences(LICENSE_SHARED_PREFS_NAME,MODE_PRIVATE);
-        macAddress=sharedPreferences.getString(LICENSE_SHARED_PREFS_MACADD,"");
-        cusName=sharedPreferences.getString(LICENSE_SHARED_PREFS_CUS_NAME,"");
-        cusPhone=sharedPreferences.getString(LICENSE_SHARED_PREFS_CUS_PHONE,"");
-        startDate=sharedPreferences.getString(LICENSE_SHARED_PREFS_START_DATE,"");
-        expDate=sharedPreferences.getString(LICENSE_SHARED_PREFS_EXP_DATE,"");
-        note=sharedPreferences.getString(LICENSE_SHARED_PREFS_NOTE,"");
+    public void licenseLocalRetriveData(String macAddress, String cusName, String cusPhone, String startDate, String expDate, String note) {
+        SharedPreferences sharedPreferences = getSharedPreferences(LICENSE_SHARED_PREFS_NAME, MODE_PRIVATE);
+        macAddress = sharedPreferences.getString(LICENSE_SHARED_PREFS_MACADD, "");
+        cusName = sharedPreferences.getString(LICENSE_SHARED_PREFS_CUS_NAME, "");
+        cusPhone = sharedPreferences.getString(LICENSE_SHARED_PREFS_CUS_PHONE, "");
+        startDate = sharedPreferences.getString(LICENSE_SHARED_PREFS_START_DATE, "");
+        expDate = sharedPreferences.getString(LICENSE_SHARED_PREFS_EXP_DATE, "");
+        note = sharedPreferences.getString(LICENSE_SHARED_PREFS_NOTE, "");
     }
 
-    public static void licenseCheck(Context context,String licenseSheetID, String licenseSheetName,String licenseCells,String macAddress,String cusName,String cusPhone,
-                                    String startDate, String expDate, String note,int remaindDays) throws ParseException {
-        GoogleSheetInterface googleSheetInterface = new GoogleSheetInterface();
-        Boolean status = false;
-        MainActivity.phoneMacAddress = getDeviceMacNumber(context);
-        cusName ="NA";
-        cusPhone = "NA";
-        startDate = "NA";
-        expDate = "NA";
-        note = "NA";
-        remaindDays = -1;
+    public static void licenseCheck(final Context context, final String licenseSheetID, final String licenseSheetName, final String licenseCells) throws ParseException {
+        final GoogleSheetInterface googleSheetInterface = new GoogleSheetInterface();
+        MainActivity.phoneMacAddress = getDeviceMacAdress();
+        MainActivity.licenseCusName = "NA";
+        MainActivity.licenseCusPhone = "NA";
+        MainActivity.licenseStartDate = "NA";
+        MainActivity.licenseExpDate = "NA";
+        MainActivity.licenseNote = "NA";
+        MainActivity.licenseRemainDays = -1;
 
-        List<List<Object>> licenseDatabase = googleSheetInterface.getData(licenseSheetID,licenseSheetName,licenseCells);
+        //List<List<Object>> licenseDatabase = googleSheetInterface.getData(licenseSheetID,licenseSheetName,licenseCells,status);
 
-        // if able to read data from server to get license information -> variable status = true
-        if(status) {
-            for (int i = 0; i < licenseDatabase.size(); i++) {
-                if (licenseDatabase.get(i).get(MainActivity.LICENSE_MACADDRESS_MAP).toString().matches(MainActivity.phoneMacAddress)) {
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
 
-                    expDate = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_EXPIRE_DATE_MAP).toString();
-                    cusName = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_NAME_MAP).toString();
-                    cusPhone = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_PHONE_MAP).toString();
-                    startDate = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_START_DATE_MAP).toString();
-                    note = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_NOTE_MAP).toString();
+                List<List<Object>> licenseDatabase = googleSheetInterface.getData(licenseSheetID, licenseSheetName, licenseCells);
+                // read from server
+                if (licenseDatabase.size() > 0) {
+                    for (int i = 0; i < licenseDatabase.size(); i++) {
+                        if (licenseDatabase.get(i).get(MainActivity.LICENSE_MACADDRESS_MAP).toString().matches(MainActivity.phoneMacAddress)) {
+
+                            MainActivity.licenseExpDate = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_EXPIRE_DATE_MAP).toString();
+                            MainActivity.licenseCusName = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_NAME_MAP).toString();
+                            MainActivity.licenseCusPhone = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_PHONE_MAP).toString();
+                            MainActivity.licenseStartDate = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_START_DATE_MAP).toString();
+                            MainActivity.licenseNote = licenseDatabase.get(i).get(MainActivity.LICENSE_CUS_NOTE_MAP).toString();
+
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                            Date exp = null;
+                            try {
+                                exp = sdf.parse(MainActivity.licenseExpDate);
+                                String currentDateString = sdf.format(new Date());
+                                Date currentDate = sdf.parse(currentDateString);
+                                long diff = exp.getTime() - currentDate.getTime();
+                                MainActivity.licenseRemainDays = (int) (diff / (1000 * 60 * 60 * 24));
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+                            // update to local database
+                            GoodsLocalGeneralDatabase goodsLocalGeneralDatabase = new GoodsLocalGeneralDatabase(context);
+                            //sqllite id always start from 1, not from 0
+                            GeneralInformation generalInformation = new GeneralInformation(1, MainActivity.licenseCusName, MainActivity.licenseCusPhone, MainActivity.licenseStartDate,
+                                    MainActivity.licenseExpDate, MainActivity.licenseNote, "NA", "NA", "NA",
+                                    "NA", "NA");
+
+                            //looking for general information of id =0
+                            GeneralInformation currentlyLicenseInfor = goodsLocalGeneralDatabase.getInforBaseID(1);
+
+                            //if available then update and if not available then add new one
+                            if (currentlyLicenseInfor == null) {
+                                goodsLocalGeneralDatabase.addInfor(generalInformation);
+                            } else {
+                                goodsLocalGeneralDatabase.updateInfor(generalInformation);
+                            }
+
+
+                        }
+                    }
+                } else {  // if can not read data from server then get from local
+
+                    GoodsLocalGeneralDatabase goodsLocalGeneralDatabase = new GoodsLocalGeneralDatabase(context);
+                    GeneralInformation licenseLocalInfor = goodsLocalGeneralDatabase.getInforBaseID(1);
+                    MainActivity.licenseCusName = licenseLocalInfor.getColumn01();
+                    MainActivity.licenseCusPhone = licenseLocalInfor.getColumn02();
+                    MainActivity.licenseStartDate = licenseLocalInfor.getColumn03();
+                    MainActivity.licenseExpDate = licenseLocalInfor.getColumn04();
+                    MainActivity.licenseNote = licenseLocalInfor.getColumn05();
 
                     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                    Date exp = sdf.parse(expDate);
-                    String currentDateString = sdf.format(new Date());
-                    Date currentDate = sdf.parse(currentDateString);
-                    long diff = exp.getTime() - currentDate.getTime();
-                    remaindDays = (int) (diff / (1000 * 60 * 60 * 24));
+                    Date exp = null;
+                    try {
+                        exp = sdf.parse(MainActivity.licenseExpDate);
+                        String currentDateString = sdf.format(new Date());
+                        Date currentDate = sdf.parse(currentDateString);
+                        long diff = exp.getTime() - currentDate.getTime();
+                        MainActivity.licenseRemainDays = (int) (diff / (1000 * 60 * 60 * 24));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
 
-                    // update to local database
 
-                    GeneralInformation generalInformation = new GeneralInformation(0,cusName,cusPhone,startDate,expDate,note,"NA","NA","NA",
-                            "NA","NA");
-                    GoodsLocalGeneralDatabase goodsLocalGeneralDatabase =new GoodsLocalGeneralDatabase(context);
-                    goodsLocalGeneralDatabase.updateInfor(generalInformation);
                 }
+
+
             }
-        } else {  // if can not read data from server then get from local
+        };
+        Thread t = new Thread(runnable);
+        t.start();
+        try {
+            t.join();
 
-            GoodsLocalGeneralDatabase goodsLocalGeneralDatabase = new GoodsLocalGeneralDatabase(context);
-            GeneralInformation licenseLocalInfor = goodsLocalGeneralDatabase.getInforBaseID(0);
-            cusName = licenseLocalInfor.getColumn01();
-            cusPhone = licenseLocalInfor.getColumn02();
-            startDate = licenseLocalInfor.getColumn03();
-            expDate = licenseLocalInfor.getColumn04();
-            note = licenseLocalInfor.getColumn05();
+        } catch (InterruptedException e) {
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            Date exp = sdf.parse(expDate);
-            String currentDateString = sdf.format(new Date());
-            Date currentDate = sdf.parse(currentDateString);
-            long diff = exp.getTime() - currentDate.getTime();
-            remaindDays = (int) (diff / (1000 * 60 * 60 * 24));
+            e.printStackTrace();
+        }
 
-
+        // if able to read data from server to get license information -> variable status = true
+        if (MainActivity.licenseRemainDays < 10 & MainActivity.licenseRemainDays > 0) {
+            //popup alert dialog
+            String message = "Thời gian sử dụng phần mềm còn " + MainActivity.licenseRemainDays + " ngày. Hãy gia hạn để tránh quá trình sử dụng bị gián đoạn";
+            dialogPopupForInfor(context,message);
         }
 
 
@@ -500,9 +539,9 @@ public class MainActivity extends AppCompatActivity {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new SummaryFragment(), "Summary");
         adapter.addFragment(new GoodsFragment(), "Goods Infor");
-        adapter.addFragment(new GoodsSearchFragment(),"Goods Search");
-        adapter.addFragment(new GoodsScanFragment(),"Goods Scan");
-        adapter.addFragment(new GoodsAddFragment(),"Add New Goods");
+        adapter.addFragment(new GoodsSearchFragment(), "Goods Search");
+        adapter.addFragment(new GoodsScanFragment(), "Goods Scan");
+        adapter.addFragment(new GoodsAddFragment(), "Add New Goods");
 
         mainViewPager.setAdapter(adapter);
     }
@@ -532,8 +571,7 @@ public class MainActivity extends AppCompatActivity {
         popupView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_OUTSIDE)
-                {
+                if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
                     popupWindow.dismiss();
                     return true;
                 }
@@ -562,41 +600,37 @@ public class MainActivity extends AppCompatActivity {
         Button goodsMainCloseBt = popupView.findViewById(R.id.goods_main_close_bt);
 
 
-
-
-
         goodsMainGoodsID.setText(goodsInformation.getGoodsCode());
         goodsMainType.setText(goodsInformation.getGoodsType());
         goodsMainSenderName.setText(goodsInformation.getGoodsSendName());
         goodsMainSenderPhone.setText(goodsInformation.getGoodsSendPhone());
-        goodsMainSenderAddress.setText(goodsInformation.getGoodsSendProvince()+","+ goodsInformation.getGoodsSendDistrict() +","+goodsInformation.getGoodsSendCity());
+        goodsMainSenderAddress.setText(goodsInformation.getGoodsSendProvince() + "," + goodsInformation.getGoodsSendDistrict() + "," + goodsInformation.getGoodsSendCity());
         goodsMainSenderDate.setText(goodsInformation.getGoodsSendDate());
         goodsMainReceiveName.setText(goodsInformation.getGoodsReceiveName());
         goodsMainReceivePhone.setText(goodsInformation.getGoodsReceivePhone());
-        goodsMainReceiveAddress.setText(goodsInformation.getGoodsReceiveProvince()+","+ goodsInformation.getGoodsReceiveDistrict() +","+goodsInformation.getGoodsReceiveCity());
+        goodsMainReceiveAddress.setText(goodsInformation.getGoodsReceiveProvince() + "," + goodsInformation.getGoodsReceiveDistrict() + "," + goodsInformation.getGoodsReceiveCity());
         goodsMainReceiveDate.setText(goodsInformation.getGoodsReceiveDate());
         //Set status
 
-        if(goodsInformation.getGoodsSts().matches("100")){
+        if (goodsInformation.getGoodsSts().matches("100")) {
             goodsMainSts.setText("Chưa Nhận");
-        }else if(goodsInformation.getGoodsSts().matches("200")) {
+        } else if (goodsInformation.getGoodsSts().matches("200")) {
             goodsMainSts.setText("Đang Ở Văn Phòng");
-        }else if(goodsInformation.getGoodsSts().matches("300")) {
+        } else if (goodsInformation.getGoodsSts().matches("300")) {
             goodsMainSts.setText("Đang Vận Chuyển");
-        }else if(goodsInformation.getGoodsSts().matches("400")) {
+        } else if (goodsInformation.getGoodsSts().matches("400")) {
             goodsMainSts.setText("Đang Ở Kho");
-        }else if(goodsInformation.getGoodsSts().matches("500")) {
+        } else if (goodsInformation.getGoodsSts().matches("500")) {
             goodsMainSts.setText("Đang Giao");
-        }else if(goodsInformation.getGoodsSts().matches("600")) {
+        } else if (goodsInformation.getGoodsSts().matches("600")) {
             goodsMainSts.setText("Đã Hoàn Thành");
-        }else{
+        } else {
             goodsMainSts.setText("Không Có Thông Tin");
         }
         goodsMainGoodsQuantity.setText(goodsInformation.getGoodsQuantity());
         goodsMainMoney.setText(goodsInformation.getGoodsMoney());
         goodsMainPrice.setText("chua co data base");
         goodsMainNote.setText(goodsInformation.getGoodsNote());
-
 
 
         goodsMainSenderCallBt.setOnClickListener(new View.OnClickListener() {
@@ -610,7 +644,7 @@ public class MainActivity extends AppCompatActivity {
         goodsMainReceiveCallBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                makeCall(context,goodsInformation.getGoodsReceivePhone());
+                makeCall(context, goodsInformation.getGoodsReceivePhone());
 
             }
         });
@@ -619,7 +653,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 popupWindow.dismiss();
-                goodsUpdateInforPopup(view,context,goodsSelectFromListview);
+                goodsUpdateInforPopup(view, context, goodsSelectFromListview);
 
             }
         });
@@ -631,8 +665,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-
 
 
     }
@@ -663,8 +695,7 @@ public class MainActivity extends AppCompatActivity {
         popupView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_OUTSIDE)
-                {
+                if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
                     popupWindow.dismiss();
                     return true;
                 }
@@ -693,16 +724,15 @@ public class MainActivity extends AppCompatActivity {
         Button goodsUpdateCloseBt = popupView.findViewById(R.id.goods_update_close_bt);
 
 
-
         goodsUpdateGoodsID.setText(goodsInformation.getGoodsCode());
         goodsUpdateType.setText(goodsInformation.getGoodsType());
         goodsUpdateSenderName.setText(goodsInformation.getGoodsSendName());
         goodsUpdateSenderPhone.setText(goodsInformation.getGoodsSendPhone());
-        goodsUpdateSenderAddress.setText(goodsInformation.getGoodsSendProvince()+","+ goodsInformation.getGoodsSendDistrict() +","+goodsInformation.getGoodsSendCity());
+        goodsUpdateSenderAddress.setText(goodsInformation.getGoodsSendProvince() + "," + goodsInformation.getGoodsSendDistrict() + "," + goodsInformation.getGoodsSendCity());
         goodsUpdateSenderDate.setText(goodsInformation.getGoodsSendDate());
         goodsUpdateReceiveName.setText(goodsInformation.getGoodsReceiveName());
         goodsUpdateReceivePhone.setText(goodsInformation.getGoodsReceivePhone());
-        goodsUpdateReceiveAddress.setText(goodsInformation.getGoodsReceiveProvince()+","+ goodsInformation.getGoodsReceiveDistrict() +","+goodsInformation.getGoodsReceiveCity());
+        goodsUpdateReceiveAddress.setText(goodsInformation.getGoodsReceiveProvince() + "," + goodsInformation.getGoodsReceiveDistrict() + "," + goodsInformation.getGoodsReceiveCity());
         goodsUpdateReceiveDate.setText(goodsInformation.getGoodsReceiveDate());
         goodsUpdateGoodsQuantity.setText(goodsInformation.getGoodsQuantity());
         goodsUpdateMoney.setText(goodsInformation.getGoodsMoney());
@@ -710,22 +740,22 @@ public class MainActivity extends AppCompatActivity {
         goodsUpdateNote.setText(goodsInformation.getGoodsNote());
 
         //parameter for spinner
-        String[] goodsStsSelectList = new String[]{"Chưa Nhận","Đang Ở Văn Phòng","Đang Vận Chuyển","Đang Ở Kho","Đang Giao","Đã Hoàn Thành"};
+        String[] goodsStsSelectList = new String[]{"Chưa Nhận", "Đang Ở Văn Phòng", "Đang Vận Chuyển", "Đang Ở Kho", "Đang Giao", "Đã Hoàn Thành"};
         ArrayAdapter<String> adapterMonth = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, goodsStsSelectList);
         goodsMainSts.setAdapter(adapterMonth);
 
         //init value for spinner
-        if(goodsInformation.getGoodsSts().matches("100")){
+        if (goodsInformation.getGoodsSts().matches("100")) {
             goodsMainSts.setSelection(0);
-        } else if(goodsInformation.getGoodsSts().matches("200")) {
+        } else if (goodsInformation.getGoodsSts().matches("200")) {
             goodsMainSts.setSelection(1);
-        }else if(goodsInformation.getGoodsSts().matches("300")) {
+        } else if (goodsInformation.getGoodsSts().matches("300")) {
             goodsMainSts.setSelection(2);
-        }else if(goodsInformation.getGoodsSts().matches("400")) {
+        } else if (goodsInformation.getGoodsSts().matches("400")) {
             goodsMainSts.setSelection(3);
-        }else if(goodsInformation.getGoodsSts().matches("500")) {
+        } else if (goodsInformation.getGoodsSts().matches("500")) {
             goodsMainSts.setSelection(4);
-        }else if(goodsInformation.getGoodsSts().matches("600")) {
+        } else if (goodsInformation.getGoodsSts().matches("600")) {
             goodsMainSts.setSelection(5);
         }
 
@@ -761,11 +791,6 @@ public class MainActivity extends AppCompatActivity {
                 goodsInformation.setGoodsSts("100");
             }
         });
-
-
-
-
-
 
 
         goodsUpdateClearBt.setOnClickListener(new View.OnClickListener() {
@@ -817,7 +842,7 @@ public class MainActivity extends AppCompatActivity {
 
                 goodsLocalDatabase.updateGoods(goodsInformation);
 
-                Toast.makeText(context,"Đã Hoàn Thành Cập Nhật",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Đã Hoàn Thành Cập Nhật", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -833,8 +858,6 @@ public class MainActivity extends AppCompatActivity {
         //show keyboard for EditText in popup windows
         popupWindow.setFocusable(true);
         popupWindow.update();
-
-
 
 
     }
@@ -864,8 +887,7 @@ public class MainActivity extends AppCompatActivity {
         popupView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_OUTSIDE)
-                {
+                if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
                     popupWindow.dismiss();
                     return true;
                 }
@@ -895,7 +917,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         //parameter for spinner
-        spinderGoodsStatus(context,goodsAddSts);
+        spinderGoodsStatus(context, goodsAddSts);
 
 
         // set selection value of spinner
@@ -972,7 +994,7 @@ public class MainActivity extends AppCompatActivity {
                 goodsInformation.setGoodsNote(goodsAddNote.getText().toString());
                 goodsLocalDatabase.addGoods(goodsInformation);
 
-                Toast.makeText(context,"Đã Hoàn Thành Thêm mới",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Đã Hoàn Thành Thêm mới", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -988,7 +1010,7 @@ public class MainActivity extends AppCompatActivity {
         goodsAddScanBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.scanBarcode(activity,fragment);
+                MainActivity.scanBarcode(activity, fragment);
             }
         });
         goodsAddGoodsID.setText(MainActivity.scanIDResult);
@@ -999,7 +1021,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public static void makeCall (Context context,String phoneNumber){
+    public static void makeCall(Context context, String phoneNumber) {
         Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumber));
         context.startActivity(intent);
 
@@ -1011,24 +1033,25 @@ public class MainActivity extends AppCompatActivity {
 
         if (item.getTitle() == "Chi Tiết") {
 
-            goodsAllInforPopup(this.getWindow().getDecorView().getRootView(),this,goodsSelectFromListview);
+            goodsAllInforPopup(this.getWindow().getDecorView().getRootView(), this, goodsSelectFromListview);
 
-        } else if(item.getTitle() == "Gọi Người Gửi") {
+        } else if (item.getTitle() == "Gọi Người Gửi") {
 
-            makeCall(this,goodsSelectFromListview.getGoodsSendPhone());
+            makeCall(this, goodsSelectFromListview.getGoodsSendPhone());
 
-        } else if(item.getTitle() == "Gọi Người Nhận") {
-            makeCall(this,goodsSelectFromListview.getGoodsReceivePhone());
+        } else if (item.getTitle() == "Gọi Người Nhận") {
+            makeCall(this, goodsSelectFromListview.getGoodsReceivePhone());
 
-        }else if(item.getTitle() == "Cập Nhật") {
-            goodsUpdateInforPopup(this.getWindow().getDecorView().getRootView(),this,goodsSelectFromListview);
+        } else if (item.getTitle() == "Cập Nhật") {
+            goodsUpdateInforPopup(this.getWindow().getDecorView().getRootView(), this, goodsSelectFromListview);
 
-        }else if(item.getTitle() == "Xóa") {
+        } else if (item.getTitle() == "Xóa") {
             GoodsLocalDatabase goodsLocalDatabase = new GoodsLocalDatabase(this);
             goodsLocalDatabase.deleteGoods(goodsSelectFromListview);
-            Toast.makeText(this,"Đã Xóa Xong",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Đã Xóa Xong", Toast.LENGTH_SHORT).show();
 
-        }else {return false;
+        } else {
+            return false;
 
         }
 
@@ -1038,7 +1061,7 @@ public class MainActivity extends AppCompatActivity {
 
     // detect scrolling direction
 
-    public static void visibleFloatButtonBaseScrollDirect(ListView listView){
+    public static void visibleFloatButtonBaseScrollDirect(ListView listView) {
         // detect scrolling direction
 
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -1069,7 +1092,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public static void scanBarcode(Activity activity, Fragment fragment){
+    public static void scanBarcode(Activity activity, Fragment fragment) {
         IntentIntegrator integrator = new IntentIntegrator(activity).forSupportFragment(fragment);
 
         //IntentIntegrator integrator = new IntentIntegrator(getActivity());
@@ -1082,7 +1105,7 @@ public class MainActivity extends AppCompatActivity {
         integrator.initiateScan();
     }
 
-    public static void scanQRcode(Activity activity, Fragment fragment){
+    public static void scanQRcode(Activity activity, Fragment fragment) {
         IntentIntegrator integrator = new IntentIntegrator(activity).forSupportFragment(fragment);
 
         //IntentIntegrator integrator = new IntentIntegrator(getActivity());
@@ -1095,11 +1118,9 @@ public class MainActivity extends AppCompatActivity {
         integrator.initiateScan();
     }
 
-
-
-    public static void spinderGoodsStatus (Context context,Spinner spinner){
+    public static void spinderGoodsStatus(Context context, Spinner spinner) {
         //parameter for spinner
-        String[] goodsStsSelectList = new String[]{"Chưa Nhận","Đang Ở Văn Phòng","Đang Vận Chuyển","Đang Ở Kho","Đang Giao","Đã Hoàn Thành"};
+        String[] goodsStsSelectList = new String[]{"Chưa Nhận", "Đang Ở Văn Phòng", "Đang Vận Chuyển", "Đang Ở Kho", "Đang Giao", "Đã Hoàn Thành"};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, goodsStsSelectList);
         spinner.setAdapter(adapter);
 
@@ -1109,7 +1130,7 @@ public class MainActivity extends AppCompatActivity {
         String deviceUniqueIdentifier = null;
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         if (null != tm) {
-           // deviceUniqueIdentifier = tm.getImei();
+            // deviceUniqueIdentifier = tm.getImei();
             deviceUniqueIdentifier = tm.getDeviceId();
         }
         if (null == deviceUniqueIdentifier || 0 == deviceUniqueIdentifier.length()) {
@@ -1119,16 +1140,37 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static String getDevicePhoneNumber(Context context) {
-        TelephonyManager tMgr = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
+        TelephonyManager tMgr = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         String mPhoneNumber = tMgr.getLine1Number();
         return mPhoneNumber;
     }
 
-    public static String getDeviceMacNumber(Context context) {
-        WifiManager manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        WifiInfo info = manager.getConnectionInfo();
-        String address = info.getMacAddress();
-        return address;
+    public static String getDeviceMacAdress(){
+
+        try {
+            List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface nif : all) {
+                if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
+
+                byte[] macBytes = nif.getHardwareAddress();
+                if (macBytes == null) {
+                    return "";
+                }
+
+                StringBuilder res1 = new StringBuilder();
+                for (byte b : macBytes) {
+                    res1.append(Integer.toHexString(b & 0xFF) + ":");
+                }
+
+                if (res1.length() > 0) {
+                    res1.deleteCharAt(res1.length() - 1);
+                }
+                return res1.toString();
+            }
+        } catch (Exception ex) {
+            //handle exception
+        }
+        return "";
     }
 
     public static void dateSelect(Context context, final EditText editText, final String dateFormat){
@@ -1295,12 +1337,12 @@ public class MainActivity extends AppCompatActivity {
 
         // delete all currently data in server
         final GoogleSheetInterface googleSheetInterface = new GoogleSheetInterface();
-        final boolean googleSheetResult =false;
+        final boolean[] googleSheetResult = {false};
         boolean result = false;
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                googleSheetInterface.deleteAllData(MainActivity.DATABASE_SPREADSHEET_ID,MainActivity.DATABASE_SHEET_NAME,MainActivity.DATABASE_SHEET_RANGE);
+                googleSheetResult[0] = googleSheetInterface.deleteAllData(MainActivity.DATABASE_SPREADSHEET_ID,MainActivity.DATABASE_SHEET_NAME,MainActivity.DATABASE_SHEET_RANGE);
             }
         };
         Thread t = new Thread(runnable);
@@ -1312,7 +1354,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // upload database to googlesheet
-        if(googleSheetResult){
+        if(googleSheetResult[0]){
             final List<List<Object>> listObj = new ArrayList<>();
             GoodsLocalDatabase goodsLocalDatabase = new GoodsLocalDatabase(context);
             List<GoodsInformation> allData = goodsLocalDatabase.getAllGoods();
@@ -1358,7 +1400,7 @@ public class MainActivity extends AppCompatActivity {
             Runnable runnable01 = new Runnable() {
                 @Override
                 public void run() {
-                    googleSheetInterface.updateRangeData(MainActivity.DATABASE_SPREADSHEET_ID,MainActivity.DATABASE_SHEET_NAME,MainActivity.LICENSE_SHEET_RANGE,listObj);
+                    googleSheetResult[0] =  googleSheetInterface.updateRangeData(MainActivity.DATABASE_SPREADSHEET_ID,MainActivity.DATABASE_SHEET_NAME,MainActivity.DATABASE_SHEET_RANGE,listObj);
                 }
             };
             Thread t1 = new Thread(runnable01);
@@ -1369,7 +1411,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            if (googleSheetResult){
+            if (googleSheetResult[0]){
                 result = true;
             }
 
@@ -1377,9 +1419,10 @@ public class MainActivity extends AppCompatActivity {
     return result;
     }
 
+
     public static boolean downloadDataFromServer(Context context) {
         final boolean googleSheetResult = false;
-        boolean result = false;
+        final boolean[] result = {false};
         final GoogleSheetInterface googleSheetInterface = new GoogleSheetInterface();
         final GoodsLocalDatabase goodsLocalDatabase = new GoodsLocalDatabase(context);
 
@@ -1388,18 +1431,24 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 List<List<Object>> dataAll = googleSheetInterface.getData(MainActivity.DATABASE_SPREADSHEET_ID, MainActivity.DATABASE_SHEET_NAME, MainActivity.DATABASE_SHEET_RANGE);
 
-                if(googleSheetResult){
+                if(dataAll.size()>0){
 
                     goodsLocalDatabase.deleteAllData();
-                    for (int i =0;i<dataAll.size();i++){
-                        GoodsInformation goodsInformation = new GoodsInformation(dataAll.get(i).get(0).toString(),dataAll.get(i).get(1).toString(),dataAll.get(i).get(2).toString(),
-                                dataAll.get(i).get(3).toString(),dataAll.get(i).get(4).toString(),dataAll.get(i).get(5).toString(),dataAll.get(i).get(6).toString(),dataAll.get(i).get(7).toString(),
-                                dataAll.get(i).get(8).toString(),dataAll.get(i).get(9).toString(),dataAll.get(i).get(10).toString(),dataAll.get(i).get(11).toString(),dataAll.get(i).get(12).toString(),
-                                dataAll.get(i).get(13).toString(),dataAll.get(i).get(14).toString(),dataAll.get(i).get(15).toString(),dataAll.get(i).get(16).toString(),dataAll.get(i).get(17).toString(),
-                                dataAll.get(i).get(18).toString(),dataAll.get(i).get(19).toString(),dataAll.get(i).get(20).toString(),dataAll.get(i).get(21).toString(),dataAll.get(i).get(22).toString(),
-                                dataAll.get(i).get(23).toString(),dataAll.get(i).get(24).toString(),dataAll.get(i).get(25).toString(),dataAll.get(i).get(26).toString(),
-                                dataAll.get(i).get(27).toString(),dataAll.get(i).get(28).toString());
-                        goodsLocalDatabase.addGoods(goodsInformation);
+
+                   if(goodsLocalDatabase.getGoodsCount() ==0) {
+                       for (int i =0;i<dataAll.size();i++){
+                           GoodsInformation goodsInformation = new GoodsInformation(dataAll.get(i).get(0).toString(),dataAll.get(i).get(1).toString(),dataAll.get(i).get(2).toString(),
+                                   dataAll.get(i).get(3).toString(),dataAll.get(i).get(4).toString(),dataAll.get(i).get(5).toString(),dataAll.get(i).get(6).toString(),dataAll.get(i).get(7).toString(),
+                                   dataAll.get(i).get(8).toString(),dataAll.get(i).get(9).toString(),dataAll.get(i).get(10).toString(),dataAll.get(i).get(11).toString(),dataAll.get(i).get(12).toString(),
+                                   dataAll.get(i).get(13).toString(),dataAll.get(i).get(14).toString(),dataAll.get(i).get(15).toString(),dataAll.get(i).get(16).toString(),dataAll.get(i).get(17).toString(),
+                                   dataAll.get(i).get(18).toString(),dataAll.get(i).get(19).toString(),dataAll.get(i).get(20).toString(),dataAll.get(i).get(21).toString(),dataAll.get(i).get(22).toString(),
+                                   dataAll.get(i).get(23).toString(),dataAll.get(i).get(24).toString(),dataAll.get(i).get(25).toString(),dataAll.get(i).get(26).toString(),
+                                   dataAll.get(i).get(27).toString(),dataAll.get(i).get(28).toString());
+                           goodsLocalDatabase.addGoods(goodsInformation);
+                       }
+                   }
+                    if (goodsLocalDatabase.getGoodsCount() >0){
+                        result[0] = true;
                     }
 
                 }
@@ -1410,11 +1459,69 @@ public class MainActivity extends AppCompatActivity {
         t.start();
         try {
             t.join();
-            result = true;
         } catch (InterruptedException e) {
-            result =false;
+            result[0] =false;
             e.printStackTrace();
         }
-    return result;
+    return result[0];
     }
+
+    public static void dialogPopupForInfor(Context context, String message){
+        //popup alert dialog
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
+        builder1.setMessage(message);
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton(
+                "Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
+
+    }
+
+    public static void checkPermission(Context context, Activity activity){
+        if (context.checkSelfPermission(Manifest.permission.CALL_PHONE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission has not been granted, therefore prompt the user to grant permission
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.CALL_PHONE}, 1);
+        }
+
+        if (context.checkSelfPermission(Manifest.permission.READ_PHONE_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission has not been granted, therefore prompt the user to grant permission
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.READ_PHONE_STATE}, 1);
+        }
+
+        if (context.checkSelfPermission(Manifest.permission.ACCESS_WIFI_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission has not been granted, therefore prompt the user to grant permission
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.ACCESS_WIFI_STATE}, 1);
+        }
+
+        WifiManager wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+        wifiManager.setWifiEnabled(true);
+
+    }
+
+    public void appShortcutCustomize(Context context){
+        ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
+        ShortcutInfo shortcut = new ShortcutInfo.Builder(context, "id1")
+                .setShortLabel("Website")
+                .setLongLabel("Open the website")
+                //.setIcon(Icon.createWithResource(context, R.drawable.icon_website))
+                .setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.mysite.example.com/")))
+                .build();
+        shortcutManager.setDynamicShortcuts(Arrays.asList(shortcut));
+
+    }
+
 }

@@ -163,7 +163,7 @@ public class GoogleSheetInterface extends Activity {
         ClearValuesRequest requestBody = new ClearValuesRequest();
         try {
             Sheets.Spreadsheets.Values.Clear request = sheetsService.spreadsheets().values().clear(SPREADSHEET_ID,range,requestBody);
-             response = request.execute();
+            response = request.execute();
 
         } catch (IOException e) {
             e.printStackTrace();
