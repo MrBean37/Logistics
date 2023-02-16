@@ -121,30 +121,33 @@ public class MainActivity extends AppCompatActivity {
     static public int GOODS_QUANTITY_MAP = 5;
     static public int GOODS_UNIT_MAP = 6;
     static public int GOODS_WEIGHT_MAP = 7;
-    static public int GOODS_MONEY_MAP = 8;
-    static public int GOODS_DATE_MAP = 9;
-    static public int GOODS_LOCATION_MAP = 10;
-    static public int GOODS_NOTE_MAP = 11;
+    static public int GOODS_VALUE_MAP = 8;
+    static public int GOODS_MONEY_MAP = 9;
+    static public int GOODS_MONEY_DELIVERY_MAP = 10;
+    static public int GOODS_SHIP_FEE_MAP = 11;
+    static public int GOODS_DATE_MAP = 12;
+    static public int GOODS_LOCATION_MAP = 13;
+    static public int GOODS_NOTE_MAP = 14;
 
-    static public int GOODS_SENDNAME_MAP = 12;
-    static public int GOODS_SENDID_MAP = 13;
-    static public int GOODS_SENDPHONE_MAP = 14;
-    static public int GOODS_SENDCITY_MAP = 15;
-    static public int GOODS_SENDDISTRICT_MAP = 16;
-    static public int GOODS_SENDPROVINCE_MAP = 17;
-    static public int GOODS_SENDCALLED_MAP = 18;
-    static public int GOODS_SENDDATE_MAP = 19;
-    static public int GOODS_SENDNOTE_MAP = 20;
+    static public int GOODS_SENDNAME_MAP = 15;
+    static public int GOODS_SENDID_MAP = 16;
+    static public int GOODS_SENDPHONE_MAP = 17;
+    static public int GOODS_SENDCITY_MAP = 18;
+    static public int GOODS_SENDDISTRICT_MAP = 19;
+    static public int GOODS_SENDPROVINCE_MAP = 20;
+    static public int GOODS_SENDCALLED_MAP = 21;
+    static public int GOODS_SENDDATE_MAP = 22;
+    static public int GOODS_SENDNOTE_MAP = 23;
 
-    static public int GOODS_RECEIVENAME_MAP = 21;
-    static public int GOODS_RECEIVEID_MAP = 22;
-    static public int GOODS_RECEIVEPHONE_MAP = 23;
-    static public int GOODS_RECEIVECITY_MAP = 24;
-    static public int GOODS_RECEIVEDISTRICT_MAP = 25;
-    static public int GOODS_RECEIVEPROVINCE_MAP = 26;
-    static public int GOODS_RECEIVECALLED_MAP = 27;
-    static public int GOODS_RECEIVEDATE_MAP = 28;
-    static public int GOODS_RECEIVENOTE_MAP = 29;
+    static public int GOODS_RECEIVENAME_MAP = 24;
+    static public int GOODS_RECEIVEID_MAP = 25;
+    static public int GOODS_RECEIVEPHONE_MAP = 26;
+    static public int GOODS_RECEIVECITY_MAP = 27;
+    static public int GOODS_RECEIVEDISTRICT_MAP = 28;
+    static public int GOODS_RECEIVEPROVINCE_MAP = 29;
+    static public int GOODS_RECEIVECALLED_MAP = 30;
+    static public int GOODS_RECEIVEDATE_MAP = 31;
+    static public int GOODS_RECEIVENOTE_MAP = 32;
 
 
     // googlesheet upload and download status
@@ -1299,7 +1302,11 @@ public class MainActivity extends AppCompatActivity {
         String goodsQuantity = object.get(MainActivity.GOODS_QUANTITY_MAP).toString();
         String goodsUnit = object.get(MainActivity.GOODS_UNIT_MAP).toString();
         String goodsWeight = object.get(MainActivity.GOODS_WEIGHT_MAP).toString();
+        String goodsValue = object.get(MainActivity.GOODS_VALUE_MAP).toString();
+
         String goodsMoney = object.get(MainActivity.GOODS_MONEY_MAP).toString();
+        String goodsMoneyDelivery = object.get(MainActivity.GOODS_MONEY_DELIVERY_MAP).toString();
+        String goodsShipFee = object.get(MainActivity.GOODS_SHIP_FEE_MAP).toString();
         String goodsDate = object.get(MainActivity.GOODS_DATE_MAP).toString();
         String goodsLocation = object.get(MainActivity.GOODS_LOCATION_MAP).toString();
         String goodsNote = object.get(MainActivity.GOODS_NOTE_MAP).toString();
@@ -1325,7 +1332,7 @@ public class MainActivity extends AppCompatActivity {
         String goodsReceiveNote = object.get(MainActivity.GOODS_RECEIVENOTE_MAP).toString();
 
         GoodsInformation goodsInformation = new GoodsInformation(goodsCode, goodsName, goodsType, goodsSts, goodsQuantity, goodsUnit,
-                goodsWeight, goodsMoney, goodsDate, goodsLocation, goodsNote, goodsSendName,
+                goodsWeight,goodsValue, goodsMoney,goodsMoneyDelivery,goodsShipFee, goodsDate, goodsLocation, goodsNote, goodsSendName,
                 goodsSendID, goodsSendPhone, goodsSendCity, goodsSendDistrict, goodsSendProvince,
                 goodsSendCalled, goodsSendDate, goodsSendNote, goodsReceiveName, goodsReceiveID,
                 goodsReceivePhone, goodsReceiveCity, goodsReceiveDistrict, goodsReceiveProvince, goodsReceiveCalled,
@@ -1443,7 +1450,7 @@ public class MainActivity extends AppCompatActivity {
                                    dataAll.get(i).get(13).toString(),dataAll.get(i).get(14).toString(),dataAll.get(i).get(15).toString(),dataAll.get(i).get(16).toString(),dataAll.get(i).get(17).toString(),
                                    dataAll.get(i).get(18).toString(),dataAll.get(i).get(19).toString(),dataAll.get(i).get(20).toString(),dataAll.get(i).get(21).toString(),dataAll.get(i).get(22).toString(),
                                    dataAll.get(i).get(23).toString(),dataAll.get(i).get(24).toString(),dataAll.get(i).get(25).toString(),dataAll.get(i).get(26).toString(),
-                                   dataAll.get(i).get(27).toString(),dataAll.get(i).get(28).toString());
+                                   dataAll.get(i).get(27).toString(),dataAll.get(i).get(28).toString(),dataAll.get(i).get(29).toString(),dataAll.get(i).get(30).toString(),dataAll.get(i).get(31).toString());
                            goodsLocalDatabase.addGoods(goodsInformation);
                        }
                    }

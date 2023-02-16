@@ -183,7 +183,7 @@ public class GoodsAddFragment extends Fragment {
                 //missing price
                 String goodsNote = goodsAddNote.getText().toString();
                 // have to add the object with null ID (Primary Key) and primary key have to auto AUTOINCREMENT to avoid dupplicate when add new one
-                GoodsInformation goodsInformation = new GoodsInformation(goodsCode,"Good Name",goodsType,goodsSts,goodsQuantity,"goods unit","goods weight",goodsMoney,"goods date","goods location",
+                GoodsInformation goodsInformation = new GoodsInformation(goodsCode,"Good Name",goodsType,goodsSts,goodsQuantity,"goods unit","goods weight","goods value",goodsMoney,"good Money Delivery","good ship fee","goods date","goods location",
                         goodsNote,goodsSendName,"sender id",goodsSendPhone,goodsSendCity,"send district","send province","send called",goodsSendDate,"send note",goodsReceiveName,"receiver id",goodsReceivePhone,
                         goodsReceiveCity,"received district","receiver province","receiver called",goodsReceiveDate,"receiver note");
                 goodsLocalDatabase.addGoods(goodsInformation);
