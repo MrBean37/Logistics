@@ -156,8 +156,8 @@ public class GoodsScanFragment extends Fragment {
         } else {
             //Toast.makeText(getActivity(),"not scan anything",Toast.LENGTH_LONG);
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle("Result");
-            builder.setMessage("This Tool Not Available");
+            builder.setTitle("Kết Quả");
+            builder.setMessage("Mã Hàng Này Không Tồn Tại");
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {

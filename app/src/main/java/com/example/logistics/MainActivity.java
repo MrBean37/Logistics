@@ -154,6 +154,23 @@ public class MainActivity extends AppCompatActivity {
     static public int googleSheetDownloadSts = 0;
     static public int googleSheetUploadoadSts = 0;
 
+    // Sumary status
+    static public int sumaryGoodsTotal=0;
+    static public int sumaryGoodsNotReceived=0;
+    static public int sumaryGoodsInOffice=0;
+    static public int sumaryGoodsShiping=0;
+    static public int sumaryGoodsDelivery=0;
+    static public int sumaryGoodsFinish=0;
+    static public List<GoodsInformation> listGoodsTotal;
+    static public List<GoodsInformation> listGoodsNotReceived;
+    static public List<GoodsInformation> listGoodsInOffice;
+    static public List<GoodsInformation> listGoodsShiping;
+    static public List<GoodsInformation> listGoodsDelivery;
+    static public List<GoodsInformation> listGoodsFinish;
+
+
+
+
 
     //floating button for main controll buttons
     static public FloatingActionButton mainFab;
@@ -205,6 +222,9 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        //update currently status of goods
+        MainActivity.goodsSumary(getApplicationContext());
+
         //check the remain days
         if (MainActivity.licenseRemainDays > -2) {
             setContentView(R.layout.activity_main);
@@ -231,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
 
             mainFab.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    Toast.makeText(getApplication(), MainActivity.licenseExpDate + ";" + MainActivity.phoneMacAddress, Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(getApplication(), MainActivity.licenseExpDate + ";" + MainActivity.phoneMacAddress, Toast.LENGTH_SHORT).show();
 
                     if (summaryFab.getVisibility() == View.GONE) {
                         summaryFab.setVisibility(View.VISIBLE);
@@ -286,6 +306,7 @@ public class MainActivity extends AppCompatActivity {
             setupViewPager();
             summaryFab.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
+                    MainActivity.goodsSumary(getApplicationContext());
                     mainViewPager.setCurrentItem(0);
 
                     lastActiveFragment = MainActivity.curActiveFragment; //set last fragment
@@ -593,9 +614,15 @@ public class MainActivity extends AppCompatActivity {
         TextView goodsMainReceiveAddress = popupView.findViewById(R.id.goods_main_receiver_address);
         TextView goodsMainReceiveDate = popupView.findViewById(R.id.goods_main_receiver_date);
         TextView goodsMainSts = popupView.findViewById(R.id.goods_main_goods_sts);
+        TextView goodsMainLocation = popupView.findViewById(R.id.goods_main_goods_location);
+
         TextView goodsMainGoodsQuantity = popupView.findViewById(R.id.goods_main_goods_quantity);
         TextView goodsMainMoney = popupView.findViewById(R.id.goods_main_money);
-        TextView goodsMainPrice = popupView.findViewById(R.id.goods_main_goods_price);
+        TextView goodsMainMoneyDelivery = popupView.findViewById(R.id.goods_main_money_delivery);
+        TextView goodsMainShipFee = popupView.findViewById(R.id.goods_main_money_ship);
+
+
+        TextView goodsMainValue = popupView.findViewById(R.id.goods_main_goods_value);
         TextView goodsMainNote = popupView.findViewById(R.id.goods_main_goods_notes);
         Button goodsMainSenderCallBt = popupView.findViewById(R.id.goods_main_call_sender_bt);
         Button goodsMainReceiveCallBt = popupView.findViewById(R.id.goods_main_call_receiver_bt);
@@ -630,9 +657,14 @@ public class MainActivity extends AppCompatActivity {
         } else {
             goodsMainSts.setText("Không Có Thông Tin");
         }
+
+        goodsMainLocation.setText(goodsInformation.getGoodsLocation());
         goodsMainGoodsQuantity.setText(goodsInformation.getGoodsQuantity());
         goodsMainMoney.setText(goodsInformation.getGoodsMoney());
-        goodsMainPrice.setText("chua co data base");
+        goodsMainMoneyDelivery.setText(goodsInformation.getGoodsMoneyDelivery());
+        goodsMainShipFee.setText(goodsInformation.getGoodsShipFee());
+
+        goodsMainValue.setText(goodsInformation.getGoodsValue());
         goodsMainNote.setText(goodsInformation.getGoodsNote());
 
 
@@ -1528,6 +1560,61 @@ public class MainActivity extends AppCompatActivity {
                 .setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.mysite.example.com/")))
                 .build();
         shortcutManager.setDynamicShortcuts(Arrays.asList(shortcut));
+
+    }
+
+    public static void goodsSumary(Context context){
+        GoodsLocalDatabase goodsLocalDatabase = new GoodsLocalDatabase(context);
+
+        // status: Chua nhan : 100, dang o kho cho van chuyen :200,dang van chuyen: 300,dang o kho cho giao : 400, dang giao: 500, da xong: 600
+        listGoodsTotal = goodsLocalDatabase.getAllGoods();
+        listGoodsNotReceived = goodsLocalDatabase.getGoodsBaseSts("100");
+        listGoodsInOffice = goodsLocalDatabase.getGoodsBaseSts("400");
+        listGoodsShiping = goodsLocalDatabase.getGoodsBaseSts("300");
+        listGoodsDelivery = goodsLocalDatabase.getGoodsBaseSts("500");
+        listGoodsFinish = goodsLocalDatabase.getGoodsBaseSts("600");
+
+        if (listGoodsTotal.size()>0) {
+            sumaryGoodsTotal = listGoodsTotal.size();
+            //null list can get error when get the size
+        }else {
+            sumaryGoodsTotal = 0;
+        }
+
+        if (listGoodsNotReceived.size()>0) {
+            sumaryGoodsNotReceived = listGoodsNotReceived.size();
+            //null list can get error when get the size
+        }else {
+            sumaryGoodsNotReceived = 0;
+        }
+
+        if (listGoodsInOffice.size()>0) {
+            sumaryGoodsInOffice = listGoodsInOffice.size();
+            //null list can get error when get the size
+        }else {
+            sumaryGoodsInOffice = 0;
+        }
+
+        if (listGoodsShiping.size()>0) {
+            sumaryGoodsShiping = listGoodsShiping.size();
+            //null list can get error when get the size
+        }else {
+            sumaryGoodsShiping = 0;
+        }
+
+        if (listGoodsDelivery.size()>0) {
+            sumaryGoodsDelivery = listGoodsDelivery.size();
+            //null list can get error when get the size
+        }else {
+            sumaryGoodsDelivery = 0;
+        }
+
+        if (listGoodsFinish.size()>0) {
+            sumaryGoodsFinish = listGoodsFinish.size();
+            //null list can get error when get the size
+        }else {
+            sumaryGoodsFinish = 0;
+        }
 
     }
 

@@ -62,48 +62,20 @@ public class SummaryFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.summary_layout, container, false);
-        TextView summaryPhoneID = view.findViewById(R.id.summary_phoneID);
-        TextView summaryDate = view.findViewById(R.id.summary_date);
-        TextView summarySts = view.findViewById(R.id.summary_sts);
-        TextView summaryRoute = view.findViewById(R.id.summary_route);
-        TextView summaryGoodsTotal = view.findViewById(R.id.summary_total_goods);
+        TextView summaryGoodsTotal = view.findViewById(R.id.summary_goods_total);
+        TextView summaryGoodsNotReceived = view.findViewById(R.id.summary_goods_not_received);
+        TextView summaryGoodsInOffice = view.findViewById(R.id.summary_goods_in_office);
+        TextView summaryGoodsShiping = view.findViewById(R.id.summary_goods_shipping);
+        TextView summaryGoodsDelivery = view.findViewById(R.id.summary_goods_delivery);
         TextView summaryGoodsDone = view.findViewById(R.id.summary_goods_done);
-        TextView summaryGoodsNotDone = view.findViewById(R.id.summary_goods_notdone);
 
-        GoodsLocalDatabase goodsLocalDatabase = new GoodsLocalDatabase(getActivity());
-
-        // general information will be get at code =-1
-        GoodsInformation goodsInformation = goodsLocalDatabase.getGoodsBaseID(-1);
-        // status: Chua nhan : 100, dang o kho cho van chuyen :200,dang van chuyen: 300,dang o kho cho giao : 400, dang giao: 500, da xong: 600
-        List<GoodsInformation> goodsDone = goodsLocalDatabase.getGoodsBaseSts("600");
-
-        if (goodsInformation != null) {
-            summaryPhoneID.setText(goodsInformation.getGoodsName());
-            summaryDate.setText(goodsInformation.getGoodsDate());
-            summarySts.setText(goodsInformation.getGoodsSts());
-            summaryRoute.setText(goodsInformation.getGoodsNote());
-            summaryGoodsTotal.setText(Integer.toString(goodsLocalDatabase.getGoodsCount()-1));
-
-            if (goodsDone.size()>0) {
-                summaryGoodsDone.setText(Integer.toString(goodsDone.size()));
-                summaryGoodsNotDone.setText(Integer.toString(goodsLocalDatabase.getGoodsCount()-1 - goodsDone.size()));
-             //null list can get error when get the size
-            }else {
-                summaryGoodsDone.setText("0");
-                summaryGoodsNotDone.setText(Integer.toString(goodsLocalDatabase.getGoodsCount()-1 ));
-            }
-        } else {
-            summaryPhoneID.setText("Không xác định");
-            summaryDate.setText("Không xác định");
-            summarySts.setText("Không xác định");
-            summaryRoute.setText("Không xác định");
-            summaryGoodsTotal.setText("Không xác định");
-            summaryGoodsDone.setText("Không xác định");
-            summaryGoodsNotDone.setText("Không xác định");
-
-        }
-
-
+        //MainActivity.goodsSumary(getActivity());
+        summaryGoodsTotal.setText(Integer.toString(MainActivity.sumaryGoodsTotal));
+        summaryGoodsNotReceived.setText(Integer.toString(MainActivity.sumaryGoodsNotReceived));
+        summaryGoodsInOffice.setText(Integer.toString(MainActivity.sumaryGoodsInOffice));
+        summaryGoodsShiping.setText(Integer.toString(MainActivity.sumaryGoodsShiping));
+        summaryGoodsDelivery.setText(Integer.toString(MainActivity.sumaryGoodsDelivery));
+        summaryGoodsDone.setText(Integer.toString(MainActivity.sumaryGoodsFinish));
 
         return view;
     }

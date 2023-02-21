@@ -164,12 +164,29 @@
                 android:background="@color/white"
                 android:textStyle="bold"
                 android:textSize="20dp"
-                android:text="Số Kiện"
+                android:text="Vị Trí Hàng"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
             </TextView>
             <TextView
                 android:background="@color/white"
+                android:id="@+id/goods_main_goods_location"
+                android:gravity="center"
+                android:text="chưa giao"
+                android:textSize="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+
+
+            <TextView
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:text="Số Kiện"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+            <TextView
                 android:id="@+id/goods_main_goods_quantity"
                 android:gravity="center"
                 android:text="2/5"
@@ -179,6 +196,7 @@
             </TextView>
 
             <TextView
+                android:background="@color/white"
                 android:textStyle="bold"
                 android:textSize="20dp"
                 android:text="Số Tiền Phải Thu"
@@ -186,7 +204,24 @@
                 android:layout_height="wrap_content">
             </TextView>
             <TextView
+                android:background="@color/white"
                 android:id="@+id/goods_main_money"
+                android:gravity="center"
+                android:text="25.000"
+                android:textSize="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+
+            <TextView
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:text="Số Tiền Chuyển Hộ"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+            <TextView
+                android:id="@+id/goods_main_money_delivery"
                 android:gravity="center"
                 android:text="25.000"
                 android:textSize="20dp"
@@ -198,15 +233,15 @@
                 android:background="@color/white"
                 android:textStyle="bold"
                 android:textSize="20dp"
-                android:text="Giá Trị Hàng"
+                android:text="Cước Vận Chuyển"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
             </TextView>
             <TextView
                 android:background="@color/white"
-                android:id="@+id/goods_main_goods_price"
+                android:id="@+id/goods_main_money_ship"
                 android:gravity="center"
-                android:text="1.000.000"
+                android:text="25.000"
                 android:textSize="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -215,11 +250,29 @@
             <TextView
                 android:textStyle="bold"
                 android:textSize="20dp"
+                android:text="Giá Trị Hàng"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+            <TextView
+                android:id="@+id/goods_main_goods_value"
+                android:gravity="center"
+                android:text="1.000.000"
+                android:textSize="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TextView>
+
+            <TextView
+                android:background="@color/white"
+                android:textStyle="bold"
+                android:textSize="20dp"
                 android:text="Ghi Chú"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
             </TextView>
             <TextView
+                android:background="@color/white"
                 android:id="@+id/goods_main_goods_notes"
                 android:gravity="center"
                 android:text="abcxyz"

@@ -110,7 +110,7 @@ public class GoodsLocalDatabase extends SQLiteOpenHelper {
             for (int i = -1; i < 40; i++) {
                 String ten_goods = "Hàng số " + i;
                 goods = new GoodsInformation();
-                //goods.setGoodsID(i);
+                goods.setGoodsID(i);
                 goods.setGoodsCode(ten_goods +"Code");
                 goods.setGoodsMoney(ten_goods + "Money");
                 goods.setGoodsName(ten_goods + "Name");

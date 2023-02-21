@@ -16,15 +16,40 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:text="Dữ Liệu:"
+                android:text="Tổng Số Hàng:"
                 android:textSize="30dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
             </TextView>
 
             <TextView
-                android:id="@+id/summary_phoneID"
-                android:text="Máy 01"
+                android:id="@+id/summary_goods_total"
+                android:text="0"
+                android:textSize="30dp"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </TextView>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:layout_marginLeft="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:text="Số Hàng Chưa Nhận:"
+                android:textSize="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </TextView>
+
+            <TextView
+                android:id="@+id/summary_goods_not_received"
+                android:text="0"
                 android:textSize="30dp"
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"
@@ -40,15 +65,40 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:text="Ngày:"
+                android:text="Số Hàng Đang Ở Văn Phòng:"
                 android:textSize="30dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
             </TextView>
 
             <TextView
-                android:id="@+id/summary_date"
-                android:text="30/04/2022"
+                android:id="@+id/summary_goods_in_office"
+                android:text="0"
+                android:textSize="30dp"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </TextView>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:layout_marginLeft="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:text="Số Hàng Đang Vận Chuyển:"
+                android:textSize="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </TextView>
+
+            <TextView
+                android:id="@+id/summary_goods_shipping"
+                android:text="0"
                 android:textSize="30dp"
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"
@@ -64,39 +114,15 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:text="Trạng Thái:"
+                android:text="Số Hàng Đang Giao:"
                 android:textSize="30dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
             </TextView>
 
             <TextView
-                android:id="@+id/summary_sts"
-                android:text="Đi nhận hàng"
-                android:textSize="30dp"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-            </TextView>
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:orientation="vertical"
-            android:layout_marginLeft="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:text="Lộ Trình:"
-                android:textSize="30dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-            </TextView>
-
-            <TextView
-                android:id="@+id/summary_route"
-                android:text="Vinh - Hà Nội"
+                android:id="@+id/summary_goods_delivery"
+                android:text="0"
                 android:textSize="30dp"
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"
@@ -106,37 +132,14 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:background="@color/white"
             android:orientation="vertical"
             android:layout_marginLeft="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <TextView
-                android:text="Tổng số hàng:"
-                android:textSize="30dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-            </TextView>
-
-            <TextView
-                android:id="@+id/summary_total_goods"
-                android:text="50"
-                android:textSize="30dp"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-            </TextView>
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:orientation="vertical"
-            android:layout_marginLeft="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:text="Hàng đã nhận:"
+                android:text="Số Hàng Đã Hoàn Thành:"
                 android:textSize="30dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
@@ -144,7 +147,7 @@
 
             <TextView
                 android:id="@+id/summary_goods_done"
-                android:text="20"
+                android:text="0"
                 android:textSize="30dp"
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"
@@ -153,29 +156,6 @@
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:orientation="vertical"
-            android:layout_marginLeft="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:text="Hàng chưa nhận:"
-                android:textSize="30dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-            </TextView>
-
-            <TextView
-                android:id="@+id/summary_goods_notdone"
-                android:text="30"
-                android:textSize="30dp"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-            </TextView>
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.constraintlayout.widget.ConstraintLayout>
